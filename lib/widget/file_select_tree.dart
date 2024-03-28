@@ -1,42 +1,89 @@
 part of 'part.dart';
 
+class _SelectPath extends ChangeNotifier {
+  String path;
+
+  _SelectPath(this.path);
+
+  void changePath(String v) {
+    path = v;
+    notifyListeners();
+  }
+}
+
+typedef SelectWidgetBuilder = Widget Function(String path);
+
 ///文件选择器(树)
-class FileSelectTree extends ConsumerWidget {
-  const FileSelectTree({super.key});
+class FileSelectTree extends ConsumerStatefulWidget {
+  final SelectWidgetBuilder onSelect;
+  const FileSelectTree({super.key,required this.onSelect});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<FileSelectTree> createState() => _FileSelectTreeState();
+}
+
+class _FileSelectTreeState extends ConsumerState<FileSelectTree> {
+  final _selectPath = _SelectPath("");
+
+  @override
+  Widget build(BuildContext context) {
     final roots = ref.activeRootModels;
-    return CustomScrollView(
-      slivers: [
-        ...roots.map((FsModel element) {
-          return SliverMainAxisGroup(slivers: [
-            SliverToBoxAdapter(
-                child: MyButton(
-                    text: element.name,
-                    onTap: () {
-                      ref.activeDomainFun.changeRootFolder(
-                          element.eq,
-                          (value) => value.copyWith(
-                              folderSelectIsActive:
-                                  value.folderSelectIsActive.not));
-                    },
-                    isActivated: element.folderSelectIsActive)),
-            if (element.folderSelectIsActive)
-              FilesWidget(
-                  model: element.copyWith(
-                      setting: FsModelSetting(
-                customUiWrapper: (repo, list, child) {
-                  return child;
-                },
-                customBuilder: (model, context, ref) {
-                  return _FolderTree(fsModel: model);
-                },
-              )))
-          ]);
-        })
-      ],
-    );
+    return pp.ChangeNotifierProvider<_SelectPath>(
+        create: (BuildContext context) {
+          return _selectPath;
+        }, child: pp.Consumer<_SelectPath>(
+      builder: (context, selectPath, child) {
+        return SizedBox(
+          height: double.infinity,
+          child: Column(
+            children: [
+              Expanded(
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      ...roots.map((FsModel element) {
+                        return pp.ChangeNotifierProvider(
+                          create: (BuildContext context) {
+                            return element;
+                          },
+                          child: pp.Consumer<FsModel>(
+                            builder: (context, value, child) {
+                              return ConfigurableExpansionTile(
+                                header:
+                                    (isExpanded, iconTurns, heightFactor, controller) {
+                                  return Expanded(
+                                      child: MyButton(
+                                        isActivated:
+                                        element.simplePathUrl == selectPath.path,
+                                        text: element.name,
+                                        onTap: () {
+                                          selectPath.changePath(element.simplePathUrl);
+                                        },
+                                        leading: GestureDetector(
+                                            onTap: () {
+                                              controller.handleTap();
+                                            },
+                                            child: Icon(isExpanded
+                                                ? Icons.expand_more
+                                                : Icons.keyboard_arrow_right)),
+                                      ));
+                                },
+                                childrenBody: _FolderTree(fsModel: value),
+                              );
+                            },
+                          ),
+                        );
+                      })
+                    ],
+                  ),
+                ),
+              ),
+              widget.onSelect.call(selectPath.path)
+            ],
+          ),
+        );
+      },
+    ));
   }
 }
 
@@ -48,43 +95,54 @@ class _FolderTree extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final FsModel(:repo, :folderSelectIsActive) = fsModel;
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 12),
-      child: Row(
-        children: [
-
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(fsModel.name,style: context.textTheme.titleMedium),
-                Text(fsModel.simplePathUrl,style: context.textTheme.bodySmall),
-              ],
-            ),
-          ),
-          const SizedBox(width: 12),
-          IconButton(
-              onPressed: () {
-                if (repo != null) {
-                  var FilesRepo(:array) = repo;
-                  array = array
-                      .updateAllWhere((e) => e.folderSelectIsActive == true,
-                          (value) => value.copyWith(folderSelectIsActive: false))
-                      .updateItemFirstWhere(fsModel.eq, (old) {
-                    return old.copyWith(folderSelectIsActive: !old.folderSelectIsActive);
-                  });
-                  repo.array = array;
-                  repo.setState();
-                  debugPrint("更新选中状态.");
-                }
-              },
-              icon: Icon(folderSelectIsActive
-                  ? Icons.check_box
-                  : Icons.check_box_outline_blank))
-        ],
+    return Container(
+      margin: const EdgeInsets.all(5.0),
+      padding: const EdgeInsets.all(5),
+      constraints: const BoxConstraints(
+        maxHeight: 200
       ),
+      decoration: BoxDecoration(
+        border: Border.all(width: .5,color: Colors.grey.shade200),borderRadius: BorderRadius.circular(12)
+      ),
+      child: FilesWidget(
+          model: fsModel.copyWith(
+              setting: FsModelSetting(
+        customUiWrapper: (repo, list, child) {
+          return LoadingMoreCustomScrollView(
+            slivers: [child],
+          );
+        },
+        filter: (files) => files.where((element) => element.isDir).toIList(),
+                customBuilder: (model, context, ref) {
+                  return _itemBuilder(model);
+                },
+      ))),
     );
+  }
 
+  Widget _itemBuilder(FsModel item) {
+    return pp.Consumer<_SelectPath>(
+      builder: (context, selectPath, child) {
+        return ConfigurableExpansionTile(
+            header: (isExpanded, iconTurns, heightFactor, controller) {
+              return Expanded(
+                  child: MyButton(
+                text: item.name,
+                isActivated: item.simplePathUrl == selectPath.path,
+                onTap: () {
+                  selectPath.changePath(item.simplePathUrl);
+                },
+                leading: GestureDetector(
+                    onTap: () {
+                      controller.handleTap();
+                    },
+                    child: Icon(isExpanded
+                        ? Icons.expand_more
+                        : Icons.keyboard_arrow_right)),
+              ));
+            },
+            childrenBody: _FolderTree(fsModel: item));
+      },
+    );
   }
 }

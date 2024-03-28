@@ -40,7 +40,7 @@ class DioInstance {
     dio = Dio(options);
     try {
      await DdCheckPlugin().init(dio!,
-          initHost: '192.168.1.102',
+          initHost: '192.168.199.80',
           port: 9998,
           projectName: 'alist', conectSuccess: (value) {
       }, timeOut: const Duration(seconds: 5));

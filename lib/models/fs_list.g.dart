@@ -39,6 +39,8 @@ abstract class _$FsModelCWProxy {
 
   FsModel dirs(IList<FilesWidget> dirs);
 
+  FsModel simplePathFolder(String simplePathFolder);
+
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `FsModel(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
   /// Usage
@@ -62,6 +64,7 @@ abstract class _$FsModelCWProxy {
     bool? folderSelectIsActive,
     FsModelSetting? setting,
     IList<FilesWidget>? dirs,
+    String? simplePathFolder,
   });
 }
 
@@ -122,6 +125,10 @@ class _$FsModelCWProxyImpl implements _$FsModelCWProxy {
   FsModel dirs(IList<FilesWidget> dirs) => this(dirs: dirs);
 
   @override
+  FsModel simplePathFolder(String simplePathFolder) =>
+      this(simplePathFolder: simplePathFolder);
+
+  @override
 
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `FsModel(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
@@ -146,6 +153,7 @@ class _$FsModelCWProxyImpl implements _$FsModelCWProxy {
     Object? folderSelectIsActive = const $CopyWithPlaceholder(),
     Object? setting = const $CopyWithPlaceholder(),
     Object? dirs = const $CopyWithPlaceholder(),
+    Object? simplePathFolder = const $CopyWithPlaceholder(),
   }) {
     return FsModel(
       name: name == const $CopyWithPlaceholder() || name == null
@@ -215,6 +223,11 @@ class _$FsModelCWProxyImpl implements _$FsModelCWProxy {
           ? _value.dirs
           // ignore: cast_nullable_to_non_nullable
           : dirs as IList<FilesWidget>,
+      simplePathFolder: simplePathFolder == const $CopyWithPlaceholder() ||
+              simplePathFolder == null
+          ? _value.simplePathFolder
+          // ignore: cast_nullable_to_non_nullable
+          : simplePathFolder as String,
     );
   }
 }
@@ -241,6 +254,7 @@ FsModel _$FsModelFromJson(Map<String, dynamic> json) => FsModel(
       simplePathUrl: json['simplePathUrl'] as String? ?? '/',
       action: $enumDecodeNullable(_$FsModelActionEnumMap, json['action']) ??
           FsModelAction.none,
+      simplePathFolder: json['simplePathFolder'] as String? ?? "",
     );
 
 Map<String, dynamic> _$FsModelToJson(FsModel instance) => <String, dynamic>{
@@ -253,6 +267,7 @@ Map<String, dynamic> _$FsModelToJson(FsModel instance) => <String, dynamic>{
       'type': instance.type,
       'active': instance.active,
       'simplePathUrl': instance.simplePathUrl,
+      'simplePathFolder': instance.simplePathFolder,
       'action': _$FsModelActionEnumMap[instance.action]!,
     };
 

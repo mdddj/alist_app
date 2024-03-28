@@ -17,19 +17,20 @@ class FilesWidget extends ConsumerStatefulWidget {
   }
 }
 
-class _FilesWidgetState extends ConsumerState<FilesWidget> {
-  late FilesRepo repository = FilesRepo(widget.model.copyWith(context: context));
+class _FilesWidgetState extends ConsumerState<FilesWidget>
+    with AutomaticKeepAliveClientMixin {
+  late FilesRepo repository =
+      FilesRepo(widget.model.copyWith(context: context));
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return repository.watchThis<FilesRepo>(builder: (model, list) {
-      return widget.model.setting.customUiWrapper?.call(model, list,child) ??
+      return widget.model.setting.customUiWrapper?.call(model, list, child) ??
           Stack(
             children: [
               MyLoadingMoreCustomScrollView(
-                slivers: [
-                  child
-                ],
+                slivers: [child],
               ),
               LayoutBuilder(
                 builder: (context, constraints) {
@@ -57,6 +58,9 @@ class _FilesWidgetState extends ConsumerState<FilesWidget> {
         FilesItemLayout(
             fsModel: item, onTap: (value) => item.onFileTap.call(ref, context));
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }
 
 ///文件列表仓库
@@ -80,6 +84,7 @@ class FilesRepo extends MyLoadingModel<FsModel> {
         data: FsListParam(path: fsModel.simplePathUrl, page: _page)));
     var files = result.content.updateAll((value) => value.copyWith(
         simplePathUrl: '${fsModel.simplePathUrl}/${value.name}',
+        simplePathFolder: fsModel.simplePathUrl,
         root: fsModel,
         setting: fsModel.setting,
         repo: this));
@@ -99,7 +104,8 @@ class FilesRepo extends MyLoadingModel<FsModel> {
   ///更新操作.
   void changeItemAction(FsModel model, FsModelAction action) {
     array = array
-        .updateAll((value) => value.copyWith(action: FsModelAction.none,context: fsModel.context))
+        .updateAll((value) => value.copyWith(
+            action: FsModelAction.none, context: fsModel.context))
         .updateItemFirstWhere((element) => element.eq(model),
             (old) => old.copyWith(action: action));
     setState();
@@ -114,35 +120,52 @@ class FilesRepo extends MyLoadingModel<FsModel> {
 
   ///显示或者弹出右侧面板
   void changeShowRightPanel(RightPanelConfig? config) {
-    if(isMobile().not){
+    if (isMobile().not) {
       showRightAction = config;
       setState();
-    }else{
+    } else {
       final FsModel(:context) = fsModel;
-      Logger().t('context: == $context');
-      if(context!= null){
-        showModalBottomSheet(context: context, builder: (context) {
-          return const FileSelectTree();
-        });
-      }
+      if (context != null) {}
     }
+  }
+
+  void changeIsSelect(FsModel selectItem) {
+    array = array
+        .updateAll((value) => value.copyWith(active: false))
+        .updateItemFirstWhere(
+            selectItem.eq, (old) => old.copyWith(active: true));
+    notifyListeners();
+  }
+
+
+  void changeItem(FsModel model,FsModel updateModel){
+    array = array.updateItemFirstWhere(model.eq, (_) => updateModel);
+    notifyListeners();
   }
 
   @override
   void completed(IList<FsModel> list, bool isFirst) {}
 
+  ///移除项目
+  void removeItem(FsModel item){
+    array = array.removeWhere(item.eq);
+    notifyListeners();
+  }
 
+  @override
+  void dispose() {}
 }
 
 class RightPanel extends StatelessWidget {
   final RightPanelConfig? config;
   final VoidCallback close;
+
   const RightPanel({super.key, this.config, required this.close});
 
   @override
   Widget build(BuildContext context) {
     double size = config?.width ?? 200;
-    final child = config?.child ?? const SizedBox.shrink();
+    final child = config?.child(close) ?? const SizedBox.shrink();
     return Stack(
       children: [
         if (config != null)
@@ -176,8 +199,9 @@ class RightPanel extends StatelessWidget {
 
 class RightPanelConfig {
   final String title;
-  final Widget child;
+  final Widget Function(VoidCallback close) child;
   final double? width;
+
   RightPanelConfig(
       {required this.title, required this.child, this.width = 120});
 }

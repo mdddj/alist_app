@@ -6,13 +6,13 @@ import 'package:fast_immutable_collections/fast_immutable_collections.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:get_it/get_it.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart' as pp;
 
 import '../actions/part.dart';
 import '../api/part.dart';
 import '../exception/global.dart';
-import '../provider/app_manager.dart';
 import '../tool/part.dart';
 import '../ui/part.dart';
 import '../widget/part.dart';
@@ -73,17 +73,19 @@ extension FsModelEx on FsModel {
   }
 
   //复制文件
-  Future<bool> copy(
-      String copyToDirectoryPath, String currentDirectoryName) async {
+  Future<bool> copy(String copyToDirectoryPath) async {
+    Logger().d('拷贝:$simplePathFolder');
     final api = MyFsCopyFileApi(MyFsCopyApiParam(
-        srcDir: currentDirectoryName,
-        dstDir: copyToDirectoryPath,
-        names: [name]));
+        srcDir: simplePathFolder, dstDir: copyToDirectoryPath, names: [name]));
     try {
       final response = await api.request(R(
           showDefaultLoading: true,
           loadingText: '正在拷贝文件到$copyToDirectoryPath'));
-      return response.isSuccess;
+      final isSuccess = response.isSuccess;
+      if(isSuccess){
+        toast('复制成功');
+      }
+      return isSuccess;
     } on GlobalError catch (e) {
       ToastUtil.showWarning(e.getMessage());
       return false;
@@ -92,30 +94,34 @@ extension FsModelEx on FsModel {
 
   //移动文件
   Future<bool> move(
-      String copyToDirectoryPath, String currentDirectoryName) async {
+      String copyToDirectoryPath) async {
     final api = MyFsMoveFileApi(MyFsMoveFileApiParam(
-        srcDir: currentDirectoryName,
+        srcDir: simplePathFolder,
         dstDir: copyToDirectoryPath,
         names: [name]));
     try {
       final response = await api.request(R(
           showDefaultLoading: true,
           loadingText: '正在移动文件到$copyToDirectoryPath'));
-      return response.isSuccess;
-    } on GlobalError catch (_) {
+      final isSuccess = response.isSuccess;
+      if(isSuccess){
+        toast('移动成功');
+      }
+      return isSuccess;
+    } on GlobalError catch (e) {
+      ToastUtil.showWarning(e.getMessage());
       return false;
     }
   }
 
   ///重命名
-  Future<bool> rename(String newName, String path) async {
+  Future<bool> rename(String newName) async {
     try {
-      final response = await MyFsRenameFolderApi().request(R(
+     await MyFsRenameFolderApi().request(R(
           showDefaultLoading: true,
           loadingText: '重命名.',
-          data: {"name": newName, "path": path}));
-      Logger().i(response);
-      ToastUtil.showSuccess('修改成功');
+          data: {"name": newName, "path": simplePathUrl}));
+     repo?.changeItem(this, copyWith(name: newName,simplePathUrl: "$simplePathFolder/$newName"));
       return true;
     } on GlobalError catch (e) {
       e.showErrorDialog();
@@ -129,22 +135,18 @@ extension FsModelEx on FsModel {
 
   ///复制链接
   Future<void> copyFullLink() async {
-    // todo
-    // final path = provider.getPathByFsModel(this);
-    // if (isDir) {
-    //   final url = provider.application.webSite.domain;
-    //   final fullUrl = '$url$path';
-    //   fullUrl.copy();
-    //   showCopySuccessDialog(fullUrl);
-    //   return;
-    // }
-    // try {
-    //   final response = await GetIt.instance
-    //       .get<MyFsDetailGetApi>()
-    //       .request(R(loadingText: '获取文件信息', data: {'path': path}));
-    //   response.rawUrl.copy();
-    //   showCopySuccessDialog(response.rawUrl);
-    // } catch (_) {}
+    if (isDir) {
+      simplePathUrl.copy();
+      showCopySuccessDialog(simplePathUrl);
+      return;
+    }
+    try {
+      final response = await GetIt.instance
+          .get<MyFsDetailGetApi>()
+          .request(R(loadingText: '获取文件信息', data: {'path': simplePathUrl}));
+      response.rawUrl.copy();
+      showCopySuccessDialog(response.rawUrl);
+    } catch (_) {}
   }
 
   Widget getIcon({double? size, String? thumbnail}) {
@@ -207,6 +209,7 @@ class FsModel extends ChangeNotifier {
   int type = 0;
   bool active = false;
   String simplePathUrl = '/';
+  String simplePathFolder = "";
 
   @igFreezedJson
   BuildContext? context;
@@ -230,7 +233,8 @@ class FsModel extends ChangeNotifier {
       this.action = FsModelAction.none,
       this.folderSelectIsActive = false,
       this.setting = const FsModelSetting(),
-      this.dirs = const IListConst([])});
+      this.dirs = const IListConst([]),
+      this.simplePathFolder = ""});
 
   @igFreezedJson
   FilesRenderWidget get child {
@@ -314,11 +318,19 @@ class FsModel extends ChangeNotifier {
     }
   }
 
+  void changeIsSelect(bool v) {
+    folderSelectIsActive = v;
+    notifyListeners();
+  }
+
   @override
   String toString() {
     return jsonEncode(
         toJson()..addAll({"dirs": dirs.length, "root": root?.name}));
   }
+
+  @override
+  void dispose() {}
 }
 
 ///ui设置
@@ -335,28 +347,84 @@ class FsModelSetting {
 
 ///复制文件到路径
 class FsModelCopyWidget extends ConsumerWidget {
-  const FsModelCopyWidget({super.key});
+  final VoidCallback close;
+  final FsModel fsModel;
+
+  const FsModelCopyWidget(this.close, this.fsModel, {super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final fs = ref.activeDomain?.mainStorages.content ?? const IListConst([]);
     return LayoutBuilder(builder: (context, size) {
       return SizedBox(
         width: size.maxWidth,
         height: size.maxHeight,
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              ...fs.map((FsModel element) {
-                return FileSelectTree();
-              })
-            ],
-          ),
+        child: FileSelectTree(
+          onSelect: (String path) {
+            return ElevatedButton(
+                onPressed: path.isEmpty
+                    ? null
+                    : () async {
+                        final result = await fsModel.copy(path);
+                        if (result) {
+                          close();
+                        }
+                      },
+                child: Column(
+                  children: [
+                    Text('复制到目录', style: context.textTheme.titleMedium),
+                    Text(path.isEmpty ? '请选择复制路径' : path,
+                        style: context.textTheme.labelSmall
+                            ?.copyWith(color: context.colorScheme.secondary))
+                  ],
+                )).maxWidthButton;
+          },
         ),
       );
     });
   }
 }
+
+
+///复制文件到路径
+class FsModelMoveWidget extends ConsumerWidget {
+  final VoidCallback close;
+  final FsModel fsModel;
+
+  const FsModelMoveWidget(this.close, this.fsModel, {super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return LayoutBuilder(builder: (context, size) {
+      return SizedBox(
+        width: size.maxWidth,
+        height: size.maxHeight,
+        child: FileSelectTree(
+          onSelect: (String path) {
+            return ElevatedButton(
+                onPressed: path.isEmpty
+                    ? null
+                    : () async {
+                  final result = await fsModel.move(path);
+                  if (result) {
+                    fsModel.repo?.removeItem(fsModel);
+                    close();
+                  }
+                },
+                child: Column(
+                  children: [
+                    Text('移动到目录', style: context.textTheme.titleMedium),
+                    Text(path.isEmpty ? '请选择移动路径' : path,
+                        style: context.textTheme.labelSmall
+                            ?.copyWith(color: context.colorScheme.secondary))
+                  ],
+                )).maxWidthButton;
+          },
+        ),
+      );
+    });
+  }
+}
+
 
 ///文件树
 class FilesTree extends StatelessWidget {

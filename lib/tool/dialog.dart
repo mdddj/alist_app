@@ -8,7 +8,7 @@ void showNoResourceDialog(AlertParam param) {
       tag: _Alert.tag,
       animationType: SmartAnimationType.fade,
       animationTime: const Duration(milliseconds: 124),
-      maskColor: Colors.transparent);
+      maskColor: Colors.black38);
 }
 
 void showCopySuccessDialog(String url) {

@@ -170,25 +170,10 @@ List<PopupMenuEntry<String>> getFsModelMenus(
       leading: const Icon(LineIcons.copy),
       ending: const LockingWidget(),
       onTap: () {
-        Logger().i('复制.');
         fsModel.repo?.changeShowRightPanel(RightPanelConfig(
-            title: '复制', child: const FsModelCopyWidget(), width: 300));
-        // showModalBottomSheet(
-        //   useSafeArea: true,
-        //   context: context,
-        //   isScrollControlled: true,
-        //   builder: (context) {
-        //     return ProviderDialogWrapper(
-        //       child: SelectPathWidget(
-        //         model: fsModel,
-        //         callback:
-        //             (String path, FsModel selectModel, String fileName) async {
-        //           return await fsModel.copy(path, currentPath);
-        //         },
-        //       ),
-        //     );
-        //   },
-        // );
+            title: '复制',
+            child: (close) => FsModelCopyWidget(close, fsModel),
+            width: 300));
       },
     ),
     MyPopupButton(
@@ -196,27 +181,17 @@ List<PopupMenuEntry<String>> getFsModelMenus(
       leading: const Icon(Icons.move_up),
       ending: const LockingWidget(),
       onTap: () {
-        showModalBottomSheet(
-          useSafeArea: true,
-          context: context,
-          isScrollControlled: true,
-          builder: (context) {
-            return SelectPathWidget(
-              model: fsModel,
-              callback:
-                  (String toPath, FsModel selectModel, String fileName) async {
-                return await fsModel.move(toPath, currentPath);
-              },
-            );
-          },
-        );
+        fsModel.repo?.changeShowRightPanel(RightPanelConfig(
+            title: '移动',
+            child: (close) => FsModelMoveWidget(close, fsModel),
+            width: 300));
       },
     ),
     MyPopupButton(
       text: '复制链接',
       leading: const Icon(Icons.link),
       onTap: () {
-        // fsModel.copyFullLink(provider);
+        fsModel.copyFullLink();
       },
     ),
     MyPopupButton(
@@ -225,9 +200,7 @@ List<PopupMenuEntry<String>> getFsModelMenus(
       onTap: () async {
         final newName = await GetReNameWidget.getText(context, fsModel);
         if (newName != null) {
-          // todo 获取路径
-          // final path = provider.getFullPath(fsModel);
-          // fsModel.rename(newName, path);
+          await fsModel.rename(newName);
         }
       },
       ending: const LockingWidget(),

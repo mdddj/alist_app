@@ -138,13 +138,6 @@ class FilesItemLayout extends PlatformWidget {
       builder: (context, constraints) {
         return MyButton(
           text: fsModel.name,
-          //subTitle: Column(
-          //   crossAxisAlignment: CrossAxisAlignment.start,
-          //   children: [
-          //     Text('${fsModel.action}'),
-          //     Text('${fsModel.repo == null}')
-          //   ],
-          // ),
           end: SpaceRow(
             children: [
               IsCollectWidget(
@@ -174,15 +167,11 @@ class FilesItemLayout extends PlatformWidget {
           leading: fsModel.getIcon(),
           isActivated: fsModel.active,
           onTap: () {
-            // applicationProvider.activeFsModel(fsModel);
-            // if (fsModel.isDir) {
-            //   applicationProvider.gotoDirection(fsModel);
-            // } else {
-            //   applicationProvider.openFile(fsModel, context);
-            // }
+            fsModel.repo?.changeIsSelect(fsModel);
             onTap?.call(fsModel);
           },
           onSecondaryTapDown: (detail, action) {
+            fsModel.repo?.changeIsSelect(fsModel);
             final offset = detail.globalPosition;
             final posit = RelativeRect.fromLTRB(
                 offset.dx, offset.dy, offset.dx, offset.dy);

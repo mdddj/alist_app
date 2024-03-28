@@ -6,7 +6,7 @@ part of 'sites_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$sitesStateHash() => r'03ddd1d81182edeb3509375cf3ac70f9da1a4469';
+String _$sitesStateHash() => r'16f5ce4502d2d145f2965f443161e7b1c9d7013f';
 
 ///站点列表
 ///

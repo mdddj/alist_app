@@ -1,6 +1,5 @@
 import 'package:dd_js_util/dd_js_util.dart';
 import 'package:fast_immutable_collections/fast_immutable_collections.dart';
-import 'package:flutter/material.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../account/part.dart';
@@ -29,7 +28,6 @@ class SitesState extends _$SitesState {
               (value) => value.copyWith(active: true));
     }
     state = AsyncData(list);
-    debugPrint('switch domain :$account');
   }
 
   void reset() {

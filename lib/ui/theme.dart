@@ -40,6 +40,24 @@ class UiTheme {
         textButtonTheme: TextButtonThemeData(
             style: themeData.textButtonTheme.style ?? _buildButtonStyle()),
         dividerTheme: _dividerTheme(Colors.grey.shade200),
+        elevatedButtonTheme: ElevatedButtonThemeData(
+            style: ButtonStyle(
+              padding: const MaterialStatePropertyAll(EdgeInsets.all(12)),
+                elevation: MaterialStateProperty.resolveWith((states) {
+                  if(states.contains(MaterialState.disabled)){
+                    return 0;
+                  }
+                  return 30;
+                }),
+                shadowColor: MaterialStatePropertyAll(Colors.grey.shade200),
+                backgroundColor: MaterialStateProperty.resolveWith((states) {
+                  if(states.contains(MaterialState.disabled)){
+                    return Colors.grey.shade300;
+                  }
+                  return Colors.white;
+                }),
+                surfaceTintColor:
+                    const MaterialStatePropertyAll(Colors.white))),
         outlinedButtonTheme: OutlinedButtonThemeData(
             style: themeData.outlinedButtonTheme.style ??
                 _buildButtonStyle().copyWith(
