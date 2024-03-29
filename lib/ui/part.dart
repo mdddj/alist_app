@@ -2,6 +2,7 @@ library ui;
 
 import 'dart:io';
 
+import 'package:chinese_font_library/chinese_font_library.dart';
 import 'package:dd_js_util/dd_js_util.dart';
 import 'package:fast_immutable_collections/fast_immutable_collections.dart';
 import 'package:flutter/cupertino.dart';
@@ -9,7 +10,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:line_icons/line_icons.dart';
-import 'package:logger/logger.dart';
 
 import '../api/part.dart';
 import '../models/domain_account.dart';

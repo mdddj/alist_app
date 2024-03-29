@@ -3,13 +3,13 @@ part of 'part.dart';
 final _searchInputBorder = UnderlineInputBorder(
     borderSide: BorderSide.none, borderRadius: BorderRadius.circular(12));
 
-class MainToolBar extends StatelessWidget {
+class MainToolBar extends ConsumerWidget {
   static double height = 38;
 
   const MainToolBar({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final leftWidth = context.screenWidth * 0.3; //左侧宽度
     return Container(
       height: height,
@@ -110,13 +110,13 @@ class MainToolBar extends StatelessWidget {
                           borderRadius: BorderRadius.circular(12)),
                       width: constraints.maxWidth * 0.7,
                       child: TextField(
-                        cursorHeight: 14,
-                        style: TextStyle(color: context.colorScheme.primary),
+                        cursorHeight: 10,
+                        style: const TextStyle(color: Colors.grey,height: 1.8,fontSize: 12),
                         decoration: InputDecoration(
                             border: _searchInputBorder,
                             enabledBorder: _searchInputBorder,
                             focusedBorder: _searchInputBorder,
-                            hintText: '搜索文件/文件夹',
+                            hintText: '${ref.activeDomain?.name}:搜索文件/文件夹',
                             hoverColor: Colors.transparent,
                             filled: true,
                             fillColor: Colors.transparent,

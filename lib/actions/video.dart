@@ -54,23 +54,31 @@ class VideoWidget extends StatefulWidget {
 }
 
 class _VideoWidgetState extends State<VideoWidget> {
-  late final player = Player();
-  late final controller = VideoController(player);
-
+  late VideoPlayerController _controller;
   @override
   void initState() {
-    Logger().t(widget.playUrl);
-    player.open(Media(widget.playUrl));
     super.initState();
+    _controller = VideoPlayerController.networkUrl(Uri.parse(
+        widget.playUrl))
+      ..initialize().then((_) {
+        setState(() {});
+      });
   }
   @override
   Widget build(BuildContext context) {
-    return Video(controller: controller);
+    return Center(
+      child: _controller.value.isInitialized
+          ? AspectRatio(
+        aspectRatio: _controller.value.aspectRatio,
+        child: VideoPlayer(_controller),
+      )
+          : Container(),
+    );
   }
 
   @override
   void dispose() {
-    player.dispose();
+    _controller.dispose();
     super.dispose();
   }
 }
