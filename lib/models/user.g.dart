@@ -7,13 +7,13 @@ part of 'user.dart';
 // **************************************************************************
 
 _$UserImpl _$$UserImplFromJson(Map<String, dynamic> json) => _$UserImpl(
-      id: json['id'] as int? ?? 0,
+      id: (json['id'] as num?)?.toInt() ?? 0,
       username: json['username'] as String? ?? '',
       password: json['password'] as String? ?? '',
       basePath: json['base_path'] as String? ?? '',
-      role: json['role'] as int? ?? 0,
+      role: (json['role'] as num?)?.toInt() ?? 0,
       disabled: json['disabled'] as bool? ?? false,
-      permission: json['permission'] as int? ?? 0,
+      permission: (json['permission'] as num?)?.toInt() ?? 0,
       ssoId: json['sso_id'] as String? ?? '',
       otp: json['otp'] as bool? ?? false,
     );

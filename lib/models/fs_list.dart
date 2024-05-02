@@ -7,12 +7,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:get_it/get_it.dart';
+import 'package:go_router/go_router.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart' as pp;
 
 import '../actions/part.dart';
 import '../api/part.dart';
 import '../exception/global.dart';
+import '../router/router.dart';
 import '../tool/part.dart';
 import '../ui/part.dart';
 import '../widget/part.dart';
@@ -279,7 +281,12 @@ class FsModel extends ChangeNotifier {
 
   void onFileTap(WidgetRef ref, BuildContext context) {
     if (root != null && filesWidget != null) {
-      pp.Provider.of<FsModel>(context, listen: false).addDir(filesWidget!);
+      if(isMobile()){
+        context.push(const MyMobileFilesPage().location,extra: this);
+      }else{
+        pp.Provider.of<FsModel>(context, listen: false).addDir(filesWidget!);
+      }
+
     } else {
       debugPrint('--root为空');
     }
@@ -329,8 +336,6 @@ class FsModel extends ChangeNotifier {
         toJson()..addAll({"dirs": dirs.length, "root": root?.name}));
   }
 
-  @override
-  void dispose() {}
 }
 
 ///ui设置

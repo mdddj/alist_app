@@ -2952,7 +2952,7 @@ TaskModel _$TaskModelFromJson(Map<String, dynamic> json) => TaskModel(
       ..directoryPath = json['directoryPath'] as String?
       ..domainUrl = json['domainUrl'] as String?
       ..domainName = json['domainName'] as String?
-      ..sqlId = json['sqlId'] as int
+      ..sqlId = (json['sqlId'] as num).toInt()
       ..domainJsonString = json['domainJsonString'] as String;
 
 Map<String, dynamic> _$TaskModelToJson(TaskModel instance) => <String, dynamic>{

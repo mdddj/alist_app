@@ -9,12 +9,12 @@ part of 'fs_detail_info.dart';
 _$FsDetailInfoImpl _$$FsDetailInfoImplFromJson(Map<String, dynamic> json) =>
     _$FsDetailInfoImpl(
       name: json['name'] as String? ?? '',
-      size: json['size'] as int? ?? 0,
+      size: (json['size'] as num?)?.toInt() ?? 0,
       isDir: json['is_dir'] as bool? ?? false,
       modified: json['modified'] as String? ?? '',
       sign: json['sign'] as String? ?? '',
       thumb: json['thumb'] as String? ?? '',
-      type: json['type'] as int? ?? 0,
+      type: (json['type'] as num?)?.toInt() ?? 0,
       rawUrl: json['raw_url'] as String? ?? '',
       readme: json['readme'] as String? ?? '',
       provider: json['provider'] as String? ?? '',

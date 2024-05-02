@@ -12,7 +12,8 @@ _$DomainEditModelImpl _$$DomainEditModelImplFromJson(
       isEditorMode: json['isEditorMode'] as bool? ?? false,
       selectIdList: json['selectIdList'] == null
           ? const IListConst([])
-          : IList<int>.fromJson(json['selectIdList'], (value) => value as int),
+          : IList<int>.fromJson(
+              json['selectIdList'], (value) => (value as num).toInt()),
     );
 
 Map<String, dynamic> _$$DomainEditModelImplToJson(

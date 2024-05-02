@@ -12,7 +12,7 @@ _$FsSearchResultImpl _$$FsSearchResultImplFromJson(Map<String, dynamic> json) =>
               ?.map((e) => SearchContent.fromJson(e as Map<String, dynamic>))
               .toList() ??
           const [],
-      total: json['total'] as int? ?? 0,
+      total: (json['total'] as num?)?.toInt() ?? 0,
     );
 
 Map<String, dynamic> _$$FsSearchResultImplToJson(
@@ -27,8 +27,8 @@ _$SearchContentImpl _$$SearchContentImplFromJson(Map<String, dynamic> json) =>
       parent: json['parent'] as String? ?? '',
       name: json['name'] as String? ?? '',
       isDir: json['is_dir'] as bool? ?? false,
-      size: json['size'] as int? ?? 0,
-      type: json['type'] as int? ?? 0,
+      size: (json['size'] as num?)?.toInt() ?? 0,
+      type: (json['type'] as num?)?.toInt() ?? 0,
     );
 
 Map<String, dynamic> _$$SearchContentImplToJson(_$SearchContentImpl instance) =>

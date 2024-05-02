@@ -13,8 +13,8 @@ _$VersionInfoImpl _$$VersionInfoImplFromJson(Map<String, dynamic> json) =>
       downloadUrl: json['downloadUrl'] as String? ?? '',
       enable: json['enable'] as bool? ?? false,
       htmlViewPage: json['htmlViewPage'] as String? ?? '',
-      id: json['id'] as int? ?? 0,
-      packageSize: json['packageSize'] as int? ?? 0,
+      id: (json['id'] as num?)?.toInt() ?? 0,
+      packageSize: (json['packageSize'] as num?)?.toInt() ?? 0,
       platform: json['platform'] as String? ?? '',
       project: json['project'] == null
           ? const Project()
@@ -47,7 +47,7 @@ _$ProjectImpl _$$ProjectImplFromJson(Map<String, dynamic> json) =>
       description: json['description'] as String? ?? '',
       downloadUrl: json['downloadUrl'] as String? ?? '',
       github: json['github'] as String? ?? '',
-      id: json['id'] as int? ?? 0,
+      id: (json['id'] as num?)?.toInt() ?? 0,
       logo: json['logo'] as String? ?? '',
       name: json['name'] as String? ?? '',
       previewUrl: json['previewUrl'] as String? ?? '',

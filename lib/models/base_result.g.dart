@@ -8,7 +8,7 @@ part of 'base_result.dart';
 
 _$BaseResultImpl _$$BaseResultImplFromJson(Map<String, dynamic> json) =>
     _$BaseResultImpl(
-      code: json['code'] as int? ?? 0,
+      code: (json['code'] as num?)?.toInt() ?? 0,
       message: json['message'] as String? ?? '',
       data: json['data'] == null
           ? const DartTypeModel.nil()

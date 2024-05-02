@@ -10,9 +10,11 @@ class LoginDialog extends ConsumerStatefulWidget {
 
   @override
   ConsumerState<LoginDialog> createState() => _LoginDialogState();
+
 }
 
 class _LoginDialogState extends ConsumerState<LoginDialog> {
+
   final usernameCtrl = TextEditingController();
   final passwordCtrl = TextEditingController();
 

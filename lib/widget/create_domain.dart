@@ -46,7 +46,7 @@ class _CreateNewDomainWidgetState extends State<CreateNewDomainWidget> {
             TextField(
               focusNode: _focusNode2,
               controller: _domainCtrl,
-              decoration: const InputDecoration(hintText: '域名/IP', labelText: '域名/IP'),
+              decoration: const InputDecoration(hintText: '例子:https://pan.itbug.shop', labelText: '域名/IP'),
               onChanged: (value) {
                 _account = _account.copyWith(domain: value);
               },

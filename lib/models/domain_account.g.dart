@@ -1943,7 +1943,7 @@ DomainAccount _$DomainAccountFromJson(Map<String, dynamic> json) =>
               FilesLayoutStyle.list,
       sortType: $enumDecodeNullable(_$FilesSortTypeEnumMap, json['sortType']) ??
           FilesSortType.def,
-      id: json['id'] as int? ?? Isar.autoIncrement,
+      id: (json['id'] as num?)?.toInt() ?? Isar.autoIncrement,
     );
 
 Map<String, dynamic> _$DomainAccountToJson(DomainAccount instance) =>

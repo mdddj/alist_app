@@ -244,12 +244,12 @@ extension $FsModelCopyWith on FsModel {
 
 FsModel _$FsModelFromJson(Map<String, dynamic> json) => FsModel(
       name: json['name'] as String? ?? '',
-      size: json['size'] as int? ?? 0,
+      size: (json['size'] as num?)?.toInt() ?? 0,
       isDir: json['is_dir'] as bool? ?? false,
       modified: json['modified'] as String? ?? '',
       sign: json['sign'] as String? ?? '',
       thumb: json['thumb'] as String? ?? '',
-      type: json['type'] as int? ?? 0,
+      type: (json['type'] as num?)?.toInt() ?? 0,
       active: json['active'] as bool? ?? false,
       simplePathUrl: json['simplePathUrl'] as String? ?? '/',
       action: $enumDecodeNullable(_$FsModelActionEnumMap, json['action']) ??
@@ -281,8 +281,8 @@ _$FsListParamImpl _$$FsListParamImplFromJson(Map<String, dynamic> json) =>
     _$FsListParamImpl(
       path: json['path'] as String? ?? '',
       password: json['password'] as String? ?? '',
-      page: json['page'] as int?,
-      perPage: json['per_page'] as int?,
+      page: (json['page'] as num?)?.toInt(),
+      perPage: (json['per_page'] as num?)?.toInt(),
       refresh: json['refresh'] as bool? ?? false,
     );
 
@@ -301,7 +301,7 @@ _$FsListResultImpl _$$FsListResultImplFromJson(Map<String, dynamic> json) =>
           ? const IListConst([])
           : IList<FsModel>.fromJson(json['content'],
               (value) => FsModel.fromJson(value as Map<String, dynamic>)),
-      total: json['total'] as int? ?? 0,
+      total: (json['total'] as num?)?.toInt() ?? 0,
       readme: json['readme'] as String? ?? '',
       write: json['write'] as bool? ?? false,
       provider: json['provider'] as String? ?? '',

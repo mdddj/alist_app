@@ -10,7 +10,7 @@ _$SettingModelImpl _$$SettingModelImplFromJson(Map<String, dynamic> json) =>
     _$SettingModelImpl(
       title: json['title'] as String? ?? '',
       subTitle: json['subTitle'] as String?,
-      sort: json['sort'] as int? ?? 0,
+      sort: (json['sort'] as num?)?.toInt() ?? 0,
     );
 
 Map<String, dynamic> _$$SettingModelImplToJson(_$SettingModelImpl instance) =>

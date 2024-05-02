@@ -19,30 +19,35 @@ class FilesWidget extends ConsumerStatefulWidget {
 
 class _FilesWidgetState extends ConsumerState<FilesWidget>
     with AutomaticKeepAliveClientMixin {
-  late FilesRepo repository =
-      FilesRepo(widget.model.copyWith(context: context));
 
+  late FsModel fsModel = widget.model;
+  late FilesRepo repository =
+  FilesRepo(fsModel.copyWith(context: context));
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    return repository.watchThis<FilesRepo>(builder: (model, list) {
-      return widget.model.setting.customUiWrapper?.call(model, list, child) ??
-          Stack(
-            children: [
-              MyLoadingMoreCustomScrollView(
-                slivers: [child],
-              ),
-              LayoutBuilder(
-                builder: (context, constraints) {
-                  return RightPanel(
-                    config: model.showRightAction,
-                    close: () => model.changeShowRightPanel(null),
-                  );
-                },
-              )
-            ],
-          );
-    });
+    return pp.ChangeNotifierProvider(create: (BuildContext context) {
+      return fsModel;
+    },
+      child: repository.watchThis<FilesRepo>(builder: (model, list) {
+        return widget.model.setting.customUiWrapper?.call(model, list, child) ??
+            Stack(
+              children: [
+                MyLoadingMoreCustomScrollView(
+                  slivers: [child],
+                ),
+                LayoutBuilder(
+                  builder: (context, constraints) {
+                    return RightPanel(
+                      config: model.showRightAction,
+                      close: () => model.changeShowRightPanel(null),
+                    );
+                  },
+                )
+              ],
+            );
+      }),
+    );
   }
 
   Widget get child {
@@ -152,8 +157,6 @@ class FilesRepo extends MyLoadingModel<FsModel> {
     notifyListeners();
   }
 
-  @override
-  void dispose() {}
 }
 
 class RightPanel extends StatelessWidget {
