@@ -17,7 +17,6 @@ class MenuState with _$MenuState {
       //在面板中的全局未知
       @igFromJsonAndToJson @Default(Offset.zero) Offset pointOffset,
       @igFromJsonAndToJson @Default(Offset.zero) Offset buttonOffset,
-      @igFreezedJson required  GlobalKey<ScaffoldState> indexScrollAppbarKey,
       @igFromJsonAndToJson BuildContext? context}) = _MenuState;
 
 }

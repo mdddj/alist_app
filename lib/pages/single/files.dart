@@ -10,11 +10,12 @@ class FilesSinglePage extends ConsumerStatefulWidget {
   ConsumerState<FilesSinglePage> createState() => _FilesSinglePageState();
 }
 
-class _FilesSinglePageState extends ConsumerState<FilesSinglePage> {
+class _FilesSinglePageState extends ConsumerState<FilesSinglePage> with AutomaticKeepAliveClientMixin {
   FsModel get fsModel => widget.fsModel;
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     final provider = ref.activeDomain!;
     final layout = provider.layoutStyle;
     return Scaffold(
@@ -45,6 +46,9 @@ class _FilesSinglePageState extends ConsumerState<FilesSinglePage> {
         crossAxisSpacing: gap,
         childAspectRatio: childAspectRatio);
   }
+
+  @override
+  bool get wantKeepAlive => true;
 
   // Widget _itemBuilder(BuildContext context, FsModel item, int index) {
   //   final requestPath = '${widget.path}/${item.name}';

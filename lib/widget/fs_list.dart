@@ -5,7 +5,6 @@ class FsListRender extends PlatformWidget {
   final ValueChanged<FsModel>? onClick;
   final bool hideSortToolBar;
 
-
   const FsListRender(
       {super.key,
       required this.fsModelList,
@@ -14,7 +13,7 @@ class FsListRender extends PlatformWidget {
 
   @override
   Widget buildWithDesktop(
-      BuildContext context,WidgetRef ref,  DomainAccount domain) {
+      BuildContext context, WidgetRef ref, DomainAccount domain) {
     final error = domain.storageError;
 
     return CustomScrollView(
@@ -44,7 +43,7 @@ class FsItemLayout extends PlatformWidget {
 
   @override
   Widget buildWithDesktop(
-      BuildContext context,WidgetRef ref, DomainAccount domain) {
+      BuildContext context, WidgetRef ref, DomainAccount domain) {
     return KeyEventWidget(onEvent: (value) {
       value.whenOrNull(
         ok: () {
@@ -62,6 +61,16 @@ class FsItemLayout extends PlatformWidget {
       };
     });
   }
+
+  @override
+  Widget buildWithMobile(
+      BuildContext context, WidgetRef ref, DomainAccount domain) {
+    return MyButton(
+        leading: fsModel.getIcon(),
+        text: fsModel.name,
+        subTitle: Text(fsModel.modified),
+        onTap: () => onClick?.call(fsModel));
+  }
 }
 
 class _GridFsModelLayout extends PlatformWidget {
@@ -72,7 +81,7 @@ class _GridFsModelLayout extends PlatformWidget {
 
   @override
   Widget buildWithDesktop(
-      BuildContext context,WidgetRef ref, DomainAccount domain) {
+      BuildContext context, WidgetRef ref, DomainAccount domain) {
     return LayoutBuilder(
       builder: (context, constraints) {
         return SizedBox(

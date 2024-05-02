@@ -86,7 +86,7 @@ class MyButton extends BasePlatformWidget {
             hasFocus: hasFocus,
             child: ListTile(
               leading: leading,
-              title: Text(text, maxLines: 2, overflow: TextOverflow.ellipsis),
+              title: Text(text, maxLines: 2, overflow: TextOverflow.ellipsis,style: context.textTheme.titleMedium),
               trailing: end,
               onTap: onTap,
               subtitle: subTitle,

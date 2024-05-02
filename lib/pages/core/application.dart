@@ -20,11 +20,10 @@ class ApplicationWidget extends PlatformWidget {
   @override
   Widget buildWithMobile(
       BuildContext context, WidgetRef ref, DomainAccount domain) {
+    debugPrint("--domain $domain");
     final storages = domain.mainStorages.content;
     final layout = domain.layoutStyle;
     return Scaffold(
-      // todo --
-      // key: applicationProvider.ref.watch(menuProvider.select((value) => value.indexScrollAppbarKey)),
       drawer: const MobileLeftDrawerWidget(),
       body: CustomScrollView(
         slivers: [

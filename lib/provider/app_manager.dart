@@ -22,11 +22,16 @@ extension ApplicationManagerEx on WidgetRef {
   Future<void> switchApplication(DomainAccount domain) async {
     await AccountManager.instance.changeCurrentDomain(domain); //更新缓存
     read(sitesStateProvider.notifier).switchDomain(domain);
+    activeDomainRead?.startGetState();
   }
 
   ///当前选中的账号
   DomainAccount? get activeDomain =>
       watch(sitesStateProvider.select((value) => value.value))
+          ?.firstWhereOrNull((element) => element.active);
+
+  DomainAccount? get activeDomainRead =>
+      read(sitesStateProvider.select((value) => value.value))
           ?.firstWhereOrNull((element) => element.active);
 
   ///当前选中的状态管理

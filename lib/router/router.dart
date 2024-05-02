@@ -72,6 +72,7 @@ class MyMainPage extends StatefulShellRouteData {
       StatefulNavigationShell navigationShell) {
     if (isMobile()) {
       return NoTransitionPage(child: MobileHomePage(child: navigationShell));
+
     }
     return const NoTransitionPage(child: IndexPage());
   }

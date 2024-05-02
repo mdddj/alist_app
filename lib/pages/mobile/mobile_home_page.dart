@@ -10,7 +10,8 @@ class MobileHomePage extends ConsumerStatefulWidget {
   ConsumerState<MobileHomePage> createState() => _MobileHomePageState();
 }
 
-class _MobileHomePageState extends ConsumerState<MobileHomePage> {
+class _MobileHomePageState extends ConsumerState<MobileHomePage>
+    with AutomaticKeepAliveClientMixin {
   @override
   void initState() {
     super.initState();
@@ -25,16 +26,25 @@ class _MobileHomePageState extends ConsumerState<MobileHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return SupportRootWrapper(
-        child: Scaffold(
-      body: widget.child,
-      bottomNavigationBar: _Nav(nav: widget.child),
-    ));
+    super.build(context);
+    final domain = ref.activeDomain;
+    debugPrint('current domain $domain');
+    return pp.ChangeNotifierProvider(
+      create: (context) => domain?..startGetState(),
+      child: Scaffold(
+        body: widget.child,
+        bottomNavigationBar: _Nav(nav: widget.child),
+      ),
+    );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }
 
 class _Nav extends StatelessWidget {
   final StatefulNavigationShell nav;
+
   const _Nav({required this.nav});
 
   @override

@@ -19,8 +19,9 @@ abstract class PlatformWidget extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return pp.Consumer<DomainAccount>(
       builder: (context, value, child) {
+        final mobileValue = ref.activeDomain;
         final desktopWidget = buildWithDesktop(context, ref, value);
-        final mobileWidget = buildWithMobile(context, ref, value);
+        final mobileWidget = buildWithMobile(context, ref,mobileValue ?? value);
         return myPlatform.isDesktop ? desktopWidget : mobileWidget;
       },
     );

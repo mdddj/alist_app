@@ -22,9 +22,6 @@ mixin _$MenuState {
   Offset get pointOffset => throw _privateConstructorUsedError;
   @igFromJsonAndToJson
   Offset get buttonOffset => throw _privateConstructorUsedError;
-  @igFreezedJson
-  GlobalKey<ScaffoldState> get indexScrollAppbarKey =>
-      throw _privateConstructorUsedError;
   @igFromJsonAndToJson
   BuildContext? get context => throw _privateConstructorUsedError;
 
@@ -42,7 +39,6 @@ abstract class $MenuStateCopyWith<$Res> {
       {@JsonKey(name: 'leftMenuExpand') bool leftMenuExpand,
       @igFromJsonAndToJson Offset pointOffset,
       @igFromJsonAndToJson Offset buttonOffset,
-      @igFreezedJson GlobalKey<ScaffoldState> indexScrollAppbarKey,
       @igFromJsonAndToJson BuildContext? context});
 }
 
@@ -62,7 +58,6 @@ class _$MenuStateCopyWithImpl<$Res, $Val extends MenuState>
     Object? leftMenuExpand = null,
     Object? pointOffset = null,
     Object? buttonOffset = null,
-    Object? indexScrollAppbarKey = null,
     Object? context = freezed,
   }) {
     return _then(_value.copyWith(
@@ -78,10 +73,6 @@ class _$MenuStateCopyWithImpl<$Res, $Val extends MenuState>
           ? _value.buttonOffset
           : buttonOffset // ignore: cast_nullable_to_non_nullable
               as Offset,
-      indexScrollAppbarKey: null == indexScrollAppbarKey
-          ? _value.indexScrollAppbarKey
-          : indexScrollAppbarKey // ignore: cast_nullable_to_non_nullable
-              as GlobalKey<ScaffoldState>,
       context: freezed == context
           ? _value.context
           : context // ignore: cast_nullable_to_non_nullable
@@ -102,7 +93,6 @@ abstract class _$$MenuStateImplCopyWith<$Res>
       {@JsonKey(name: 'leftMenuExpand') bool leftMenuExpand,
       @igFromJsonAndToJson Offset pointOffset,
       @igFromJsonAndToJson Offset buttonOffset,
-      @igFreezedJson GlobalKey<ScaffoldState> indexScrollAppbarKey,
       @igFromJsonAndToJson BuildContext? context});
 }
 
@@ -120,7 +110,6 @@ class __$$MenuStateImplCopyWithImpl<$Res>
     Object? leftMenuExpand = null,
     Object? pointOffset = null,
     Object? buttonOffset = null,
-    Object? indexScrollAppbarKey = null,
     Object? context = freezed,
   }) {
     return _then(_$MenuStateImpl(
@@ -136,10 +125,6 @@ class __$$MenuStateImplCopyWithImpl<$Res>
           ? _value.buttonOffset
           : buttonOffset // ignore: cast_nullable_to_non_nullable
               as Offset,
-      indexScrollAppbarKey: null == indexScrollAppbarKey
-          ? _value.indexScrollAppbarKey
-          : indexScrollAppbarKey // ignore: cast_nullable_to_non_nullable
-              as GlobalKey<ScaffoldState>,
       context: freezed == context
           ? _value.context
           : context // ignore: cast_nullable_to_non_nullable
@@ -155,7 +140,6 @@ class _$MenuStateImpl extends _MenuState {
       {@JsonKey(name: 'leftMenuExpand') this.leftMenuExpand = false,
       @igFromJsonAndToJson this.pointOffset = Offset.zero,
       @igFromJsonAndToJson this.buttonOffset = Offset.zero,
-      @igFreezedJson required this.indexScrollAppbarKey,
       @igFromJsonAndToJson this.context})
       : super._();
 
@@ -170,15 +154,12 @@ class _$MenuStateImpl extends _MenuState {
   @igFromJsonAndToJson
   final Offset buttonOffset;
   @override
-  @igFreezedJson
-  final GlobalKey<ScaffoldState> indexScrollAppbarKey;
-  @override
   @igFromJsonAndToJson
   final BuildContext? context;
 
   @override
   String toString() {
-    return 'MenuState(leftMenuExpand: $leftMenuExpand, pointOffset: $pointOffset, buttonOffset: $buttonOffset, indexScrollAppbarKey: $indexScrollAppbarKey, context: $context)';
+    return 'MenuState(leftMenuExpand: $leftMenuExpand, pointOffset: $pointOffset, buttonOffset: $buttonOffset, context: $context)';
   }
 
   @override
@@ -192,14 +173,12 @@ class _$MenuStateImpl extends _MenuState {
                 other.pointOffset == pointOffset) &&
             (identical(other.buttonOffset, buttonOffset) ||
                 other.buttonOffset == buttonOffset) &&
-            (identical(other.indexScrollAppbarKey, indexScrollAppbarKey) ||
-                other.indexScrollAppbarKey == indexScrollAppbarKey) &&
             (identical(other.context, context) || other.context == context));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, leftMenuExpand, pointOffset,
-      buttonOffset, indexScrollAppbarKey, context);
+  int get hashCode => Object.hash(
+      runtimeType, leftMenuExpand, pointOffset, buttonOffset, context);
 
   @JsonKey(ignore: true)
   @override
@@ -213,8 +192,6 @@ abstract class _MenuState extends MenuState {
       {@JsonKey(name: 'leftMenuExpand') final bool leftMenuExpand,
       @igFromJsonAndToJson final Offset pointOffset,
       @igFromJsonAndToJson final Offset buttonOffset,
-      @igFreezedJson
-      required final GlobalKey<ScaffoldState> indexScrollAppbarKey,
       @igFromJsonAndToJson final BuildContext? context}) = _$MenuStateImpl;
   const _MenuState._() : super._();
 
@@ -227,9 +204,6 @@ abstract class _MenuState extends MenuState {
   @override
   @igFromJsonAndToJson
   Offset get buttonOffset;
-  @override
-  @igFreezedJson
-  GlobalKey<ScaffoldState> get indexScrollAppbarKey;
   @override
   @igFromJsonAndToJson
   BuildContext? get context;

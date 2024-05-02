@@ -18,7 +18,7 @@ class MenuController extends StateNotifier<MenuState>
     with ProviderMixin<MenuState> {
   final Ref ref;
 
-  MenuController(this.ref) : super( MenuState(indexScrollAppbarKey: GlobalKey<ScaffoldState>()));
+  MenuController(this.ref) : super( const MenuState());
 
   void hideLeftMenu() {
     state = state.copyWith(leftMenuExpand: true);
@@ -29,6 +29,5 @@ class MenuController extends StateNotifier<MenuState>
   }
 
   void showAppbarMenu(){
-    state.indexScrollAppbarKey.currentState?.openDrawer();
   }
 }

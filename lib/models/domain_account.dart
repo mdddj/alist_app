@@ -217,6 +217,7 @@ class DomainAccount extends ChangeNotifier {
   }
 
   void startGetState() {
+    debugPrint('start get data $domain');
     _checkPing();
     _getSetting();
     _fetchStoragesList();
@@ -343,6 +344,7 @@ class DomainAccount extends ChangeNotifier {
       }
 
       mainStorages = result;
+      debugPrint("storages loaded!");
       notifyListeners();
     } on GlobalError catch (e) {
       storageError = e;

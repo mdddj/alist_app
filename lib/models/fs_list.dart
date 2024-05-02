@@ -279,6 +279,7 @@ class FsModel extends ChangeNotifier {
   @igFreezedJson
   IList<FilesWidget> dirs = IList<FilesWidget>(const []);
 
+  //文件或者目录被点击
   void onFileTap(WidgetRef ref, BuildContext context) {
     if (root != null && filesWidget != null) {
       if(isMobile()){

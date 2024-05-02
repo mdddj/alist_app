@@ -1,6 +1,6 @@
 part of 'part.dart';
 
-double _defaultIconSize = 16.0;
+double _defaultIconSize = UiTheme.fileUiIconSize;
 
 class FileIcon extends ConsumerWidget {
   final FileType fileType;

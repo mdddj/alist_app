@@ -41,10 +41,7 @@ class MobileLeftDrawerWidget extends ConsumerWidget {
                               onTap: () {
                                 context.hideKeyBoard();
                                 context.nav.pop();
-                                WidgetsBinding.instance
-                                    .addPostFrameCallback((timeStamp) {
-                                  ref.switchApplication(e);
-                                });
+                                Future.microtask(() => ref.switchApplication(e));
                               },
                               trailing: e.isEq(ref.activeDomain)
                                   ? const Icon(LineIcons.check)
