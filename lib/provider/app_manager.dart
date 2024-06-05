@@ -1,6 +1,8 @@
 import 'package:collection/collection.dart';
 import 'package:fast_immutable_collections/fast_immutable_collections.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:provider/provider.dart';
 
 import '../account/part.dart';
 import '../models/domain_account.dart';
@@ -16,23 +18,26 @@ extension ApplicationManagerExByRef on Ref {
   }
 }
 
+
+extension ActiveDomainByContextEx on BuildContext {
+  DomainAccount? get activeDomain {
+    return watch<DomainAccount>();
+  }
+}
+
 ///
 extension ApplicationManagerEx on WidgetRef {
   ///切换站点
   Future<void> switchApplication(DomainAccount domain) async {
     await AccountManager.instance.changeCurrentDomain(domain); //更新缓存
     read(sitesStateProvider.notifier).switchDomain(domain);
-    activeDomainRead?.startGetState();
   }
 
   ///当前选中的账号
-  DomainAccount? get activeDomain =>
-      watch(sitesStateProvider.select((value) => value.value))
-          ?.firstWhereOrNull((element) => element.active);
+  DomainAccount? get activeDomain => watch(myActiveDomainProvider);
 
-  DomainAccount? get activeDomainRead =>
-      read(sitesStateProvider.select((value) => value.value))
-          ?.firstWhereOrNull((element) => element.active);
+
+  DomainAccount? get activeDomainRead => read(myActiveDomainProvider);
 
   ///当前选中的状态管理
   DomainAccountState get activeDomainFun =>

@@ -19,49 +19,73 @@ class FilesWidget extends ConsumerStatefulWidget {
 
 class _FilesWidgetState extends ConsumerState<FilesWidget>
     with AutomaticKeepAliveClientMixin {
-
   late FsModel fsModel = widget.model;
-  late FilesRepo repository =
-  FilesRepo(fsModel.copyWith(context: context));
+  late FilesRepo repository = FilesRepo(fsModel.copyWith(context: context));
+
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    return pp.ChangeNotifierProvider(create: (BuildContext context) {
-      return fsModel;
-    },
-      child: repository.watchThis<FilesRepo>(builder: (model, list) {
-        return widget.model.setting.customUiWrapper?.call(model, list, child) ??
-            Stack(
-              children: [
-                MyLoadingMoreCustomScrollView(
-                  slivers: [child],
-                ),
-                LayoutBuilder(
-                  builder: (context, constraints) {
-                    return RightPanel(
-                      config: model.showRightAction,
-                      close: () => model.changeShowRightPanel(null),
-                    );
-                  },
-                )
-              ],
-            );
-      }),
-    );
+    return repository.watchThis<FilesRepo>(builder: (model, list) {
+      return widget.model.setting.customUiWrapper?.call(model, list, child) ??
+          Stack(
+            children: [
+              MyLoadingMoreCustomScrollView(
+                slivers: [child],
+              ),
+              LayoutBuilder(
+                builder: (context, constraints) {
+                  return RightPanel(
+                    config: model.showRightAction,
+                    close: () => model.changeShowRightPanel(null),
+                  );
+                },
+              )
+            ],
+          );
+    });
   }
 
   Widget get child {
+    final layout = ref.activeDomain?.layoutStyle ?? FilesLayoutStyle.list;
     return LoadingMoreSliverList(SliverListConfig<FsModel>(
         itemBuilder: _itemBuilder,
         sourceList: repository,
         lock: false,
+        gridDelegate:switch(layout){
+          FilesLayoutStyle.list => null,
+          FilesLayoutStyle.grid => _getAxisCount(),
+        },
         indicatorBuilder: LoadingMoreStatusBuilder.sliver));
   }
 
+  SliverGridDelegateWithFixedCrossAxisCount _getAxisCount(
+      {
+      double childAspectRatio = 1.6,
+      double gap = 12}) {
+    final layout = ref.activeDomain?.layoutStyle ?? FilesLayoutStyle.list;
+    return SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount:  switch(layout){
+          FilesLayoutStyle.list =>1,
+          FilesLayoutStyle.grid => 2,
+        },
+        mainAxisSpacing: gap,
+        crossAxisSpacing: gap,
+        childAspectRatio: childAspectRatio);
+  }
+
   Widget _itemBuilder(BuildContext context, FsModel item, int index) {
-    return item.setting.customBuilder?.call(item, context, ref) ??
-        FilesItemLayout(
-            fsModel: item, onTap: (value) => item.onFileTap.call(ref, context));
+    final layout = ref.activeDomain?.layoutStyle ?? FilesLayoutStyle.list;
+    final widget = switch (layout) {
+      FilesLayoutStyle.list => FilesItemLayout(
+          fsModel: item, onTap: (value) => item.onFileTap.call(ref, context)),
+      FilesLayoutStyle.grid => GridFsModelLayout(
+          fsModel: item,
+          onClick: (value) {
+            item.onFileTap(ref, context);
+          },
+        ),
+    };
+    return item.setting.customBuilder?.call(item, context, ref) ?? widget;
   }
 
   @override
@@ -92,6 +116,7 @@ class FilesRepo extends MyLoadingModel<FsModel> {
         simplePathFolder: fsModel.simplePathUrl,
         root: fsModel,
         setting: fsModel.setting,
+        currentDirAllFiles: result.content,
         repo: this));
     if (filter != null) {
       files = filter(files);
@@ -142,8 +167,7 @@ class FilesRepo extends MyLoadingModel<FsModel> {
     notifyListeners();
   }
 
-
-  void changeItem(FsModel model,FsModel updateModel){
+  void changeItem(FsModel model, FsModel updateModel) {
     array = array.updateItemFirstWhere(model.eq, (_) => updateModel);
     notifyListeners();
   }
@@ -152,11 +176,10 @@ class FilesRepo extends MyLoadingModel<FsModel> {
   void completed(IList<FsModel> list, bool isFirst) {}
 
   ///移除项目
-  void removeItem(FsModel item){
+  void removeItem(FsModel item) {
     array = array.removeWhere(item.eq);
     notifyListeners();
   }
-
 }
 
 class RightPanel extends StatelessWidget {

@@ -41,6 +41,8 @@ abstract class _$FsModelCWProxy {
 
   FsModel simplePathFolder(String simplePathFolder);
 
+  FsModel currentDirAllFiles(IList<FsModel> currentDirAllFiles);
+
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `FsModel(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
   /// Usage
@@ -65,6 +67,7 @@ abstract class _$FsModelCWProxy {
     FsModelSetting? setting,
     IList<FilesWidget>? dirs,
     String? simplePathFolder,
+    IList<FsModel>? currentDirAllFiles,
   });
 }
 
@@ -129,6 +132,10 @@ class _$FsModelCWProxyImpl implements _$FsModelCWProxy {
       this(simplePathFolder: simplePathFolder);
 
   @override
+  FsModel currentDirAllFiles(IList<FsModel> currentDirAllFiles) =>
+      this(currentDirAllFiles: currentDirAllFiles);
+
+  @override
 
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `FsModel(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
@@ -154,6 +161,7 @@ class _$FsModelCWProxyImpl implements _$FsModelCWProxy {
     Object? setting = const $CopyWithPlaceholder(),
     Object? dirs = const $CopyWithPlaceholder(),
     Object? simplePathFolder = const $CopyWithPlaceholder(),
+    Object? currentDirAllFiles = const $CopyWithPlaceholder(),
   }) {
     return FsModel(
       name: name == const $CopyWithPlaceholder() || name == null
@@ -228,6 +236,11 @@ class _$FsModelCWProxyImpl implements _$FsModelCWProxy {
           ? _value.simplePathFolder
           // ignore: cast_nullable_to_non_nullable
           : simplePathFolder as String,
+      currentDirAllFiles: currentDirAllFiles == const $CopyWithPlaceholder() ||
+              currentDirAllFiles == null
+          ? _value.currentDirAllFiles
+          // ignore: cast_nullable_to_non_nullable
+          : currentDirAllFiles as IList<FsModel>,
     );
   }
 }

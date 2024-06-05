@@ -5,22 +5,15 @@ class FsListRender extends PlatformWidget {
   final ValueChanged<FsModel>? onClick;
   final bool hideSortToolBar;
 
-  const FsListRender(
-      {super.key,
-      required this.fsModelList,
-      this.onClick,
-      this.hideSortToolBar = false});
+  const FsListRender({super.key, required this.fsModelList, this.onClick, this.hideSortToolBar = false});
 
   @override
-  Widget buildWithDesktop(
-      BuildContext context, WidgetRef ref, DomainAccount domain) {
+  Widget buildWithDesktop(BuildContext context, WidgetRef ref, DomainAccount domain) {
     final error = domain.storageError;
-
     return CustomScrollView(
       slivers: [
         if (!hideSortToolBar) const HomeMobileToolbar().toSliverWidget,
-        if (error != null)
-          SliverFillRemaining(child: Center(child: Text(error.toString()))),
+        if (error != null) SliverFillRemaining(child: Center(child: Text(error.toString()))),
         SliverPadding(
           padding: const EdgeInsets.symmetric(horizontal: 12),
           sliver: SliverList.list(children: [
@@ -42,8 +35,7 @@ class FsItemLayout extends PlatformWidget {
   const FsItemLayout({super.key, required this.fsModel, this.onClick});
 
   @override
-  Widget buildWithDesktop(
-      BuildContext context, WidgetRef ref, DomainAccount domain) {
+  Widget buildWithDesktop(BuildContext context, WidgetRef ref, DomainAccount domain) {
     return KeyEventWidget(onEvent: (value) {
       value.whenOrNull(
         ok: () {
@@ -56,32 +48,48 @@ class FsItemLayout extends PlatformWidget {
             fsModel: fsModel,
             onClick: onClick,
           ),
-        FilesLayoutStyle.grid =>
-          _GridFsModelLayout(fsModel: fsModel, onClick: onClick),
+        FilesLayoutStyle.grid => GridFsModelLayout(fsModel: fsModel, onClick: onClick),
       };
     });
   }
 
   @override
-  Widget buildWithMobile(
-      BuildContext context, WidgetRef ref, DomainAccount domain) {
-    return MyButton(
-        leading: fsModel.getIcon(),
-        text: fsModel.name,
-        subTitle: Text(fsModel.modified),
-        onTap: () => onClick?.call(fsModel));
+  Widget buildWithMobile(BuildContext context, WidgetRef ref, DomainAccount domain) {
+    return LayoutBuilder(builder: (c, size) {
+      return MyButton(
+          leading: fsModel.getIcon(),
+          text: fsModel.name,
+          subTitle: Text(fsModel.formatDateString),
+          end: IconButton(
+              onPressed: () {
+                showModalBottomSheet(
+                    context: context,
+                    // isScrollControlled: true,
+                    builder: (context) {
+                      return ScrollWrapper(
+                        child: (ctrl) => SingleChildScrollView(
+                          controller: ctrl,
+                          child: Column(
+                            children: [...getFsModelMenus(fsModel,ref, context)],
+                          ),
+                        ),
+                      );
+                    });
+              },
+              icon: const Icon(Icons.more_horiz_outlined)),
+          onTap: () => onClick?.call(fsModel)).animate().scaleY();
+    });
   }
 }
 
-class _GridFsModelLayout extends PlatformWidget {
+class GridFsModelLayout extends PlatformWidget {
   final FsModel fsModel;
   final ValueChanged<FsModel>? onClick;
 
-  const _GridFsModelLayout({required this.fsModel, this.onClick});
+  const GridFsModelLayout({super.key, required this.fsModel, this.onClick});
 
   @override
-  Widget buildWithDesktop(
-      BuildContext context, WidgetRef ref, DomainAccount domain) {
+  Widget buildWithDesktop(BuildContext context, WidgetRef ref, DomainAccount domain) {
     return LayoutBuilder(
       builder: (context, constraints) {
         return SizedBox(
@@ -97,9 +105,7 @@ class _GridFsModelLayout extends PlatformWidget {
                 children: [
                   Expanded(child: LayoutBuilder(
                     builder: (context, constraints) {
-                      return fsModel.getIcon(
-                          size: (constraints.maxHeight * 0.8),
-                          thumbnail: fsModel.thumb);
+                      return fsModel.getIcon(size: (constraints.maxHeight * 0.8), thumbnail: fsModel.thumb);
                     },
                   )),
                   Padding(
@@ -112,6 +118,7 @@ class _GridFsModelLayout extends PlatformWidget {
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             textAlign: TextAlign.center,
+                            style: context.textTheme.titleMedium,
                           ),
                         ),
                         const SizedBox(
@@ -122,15 +129,11 @@ class _GridFsModelLayout extends PlatformWidget {
                               context: context,
                               // isScrollControlled: true,
                               builder: (context) {
-                                return ActiveApplicationWrapper(
-                                  child: ScrollWrapper(
-                                    child: (ctrl) => SingleChildScrollView(
-                                      controller: ctrl,
-                                      child: Column(
-                                        children: [
-                                          ...getFsModelMenus(fsModel, context)
-                                        ],
-                                      ),
+                                return ScrollWrapper(
+                                  child: (ctrl) => SingleChildScrollView(
+                                    controller: ctrl,
+                                    child: Column(
+                                      children: [...getFsModelMenus(fsModel, ref,context)],
                                     ),
                                   ),
                                 );
@@ -168,13 +171,10 @@ class _DefaultFsModelLayout extends ConsumerWidget {
               fileType: FileType.folder,
               iconSize: UiTheme.fileUiIconSize,
             )
-          : FileIcon(
-              fileType: fsModel.fileType,
-              iconSize: UiTheme.fileUiIconSize,
-              thumbnail: fsModel.thumb),
+          : FileIcon(fileType: fsModel.fileType, iconSize: UiTheme.fileUiIconSize, thumbnail: fsModel.thumb),
       end: GestureDetector(
         onTap: () {
-          showMenuSheet(fsModel, context);
+          showMenuSheet(fsModel,ref, context);
         },
         child: Icon(
           Icons.more_horiz,

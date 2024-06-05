@@ -25,6 +25,8 @@ abstract class _$DomainAccountCWProxy {
 
   DomainAccount mainStorages(FsListResult mainStorages);
 
+  DomainAccount storageLoading(bool storageLoading);
+
   DomainAccount layoutStyle(FilesLayoutStyle layoutStyle);
 
   DomainAccount fileOpenModel(FileOptionModel? fileOpenModel);
@@ -59,6 +61,7 @@ abstract class _$DomainAccountCWProxy {
     String? label,
     GlobalError? storageError,
     FsListResult? mainStorages,
+    bool? storageLoading,
     FilesLayoutStyle? layoutStyle,
     FileOptionModel? fileOpenModel,
     Object? error,
@@ -106,6 +109,10 @@ class _$DomainAccountCWProxyImpl implements _$DomainAccountCWProxy {
   @override
   DomainAccount mainStorages(FsListResult mainStorages) =>
       this(mainStorages: mainStorages);
+
+  @override
+  DomainAccount storageLoading(bool storageLoading) =>
+      this(storageLoading: storageLoading);
 
   @override
   DomainAccount layoutStyle(FilesLayoutStyle layoutStyle) =>
@@ -156,6 +163,7 @@ class _$DomainAccountCWProxyImpl implements _$DomainAccountCWProxy {
     Object? label = const $CopyWithPlaceholder(),
     Object? storageError = const $CopyWithPlaceholder(),
     Object? mainStorages = const $CopyWithPlaceholder(),
+    Object? storageLoading = const $CopyWithPlaceholder(),
     Object? layoutStyle = const $CopyWithPlaceholder(),
     Object? fileOpenModel = const $CopyWithPlaceholder(),
     Object? error = const $CopyWithPlaceholder(),
@@ -204,6 +212,11 @@ class _$DomainAccountCWProxyImpl implements _$DomainAccountCWProxy {
               ? _value.mainStorages
               // ignore: cast_nullable_to_non_nullable
               : mainStorages as FsListResult,
+      storageLoading: storageLoading == const $CopyWithPlaceholder() ||
+              storageLoading == null
+          ? _value.storageLoading
+          // ignore: cast_nullable_to_non_nullable
+          : storageLoading as bool,
       layoutStyle:
           layoutStyle == const $CopyWithPlaceholder() || layoutStyle == null
               ? _value.layoutStyle

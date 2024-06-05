@@ -93,23 +93,73 @@ enum DomainAccountStatus { none, ping, error }
 
 final myActiveDomainProvider =
     StateNotifierProvider<DomainAccountState, DomainAccount>((ref) {
-  final find = ref.activeDomain;
-  if (find == null) {
-    throw GlobalError.biz('未选择站点');
-  }
+  final find = ref.activeDomain ?? DomainAccount();
   return DomainAccountState(find, ref);
 });
 
 ///状态管理
 class DomainAccountState extends StateNotifier<DomainAccount> {
-  final DomainAccount account;
   final Ref ref;
 
-  DomainAccountState(this.account, this.ref) : super(account);
+  DomainAccountState(super.account, this.ref) {
+    startGetState();
+  }
+
+  void startGetState() {
+    _fetchStoragesList();
+  }
 
   ///异步更新网站设置
   void asyncUpdateSitSetting() {
     tryRequest<SiteSetting>(() => MyPublicGetSettingApi().request());
+  }
+
+  ///检测在线状态
+  Future<void> _checkPing() async {
+    try {
+      var DomainAccount(:status) = state;
+      state = state.copyWith.error(null);
+      final api = MyPublicPingApi();
+      final response = await api.request(
+          R(fullUrl: '${state.host}${api.url}', showDefaultLoading: false));
+      status = switch (response.toString()) {
+        "pong" => DomainAccountStatus.ping,
+        _ => DomainAccountStatus.error
+      };
+      if (status == DomainAccountStatus.error) {
+        state = state.copyWith.error(response);
+      }
+      state = state.copyWith.status(status);
+    } catch (e) {
+      state = state.copyWith(error: e, status: DomainAccountStatus.error);
+    }
+  }
+
+  ///获取存储桶
+  Future<void> _fetchStoragesList() async {
+    var DomainAccount(:storageLoading, :storageError, :mainStorages) = state;
+    try {
+      if (storageLoading != true) {
+        state = state.copyWith.storageLoading(true);
+      }
+      if (storageError != null) {
+        state = state.copyWith.storageError(null);
+      }
+      state = state.copyWith.mainStorages(const FsListResult());
+      var result = await MyFsListApi().request(R(
+          showDefaultLoading: false,
+          data: const FsListParam(path: '/').toJson()));
+      if (result.content.isNotEmpty) {
+        result = result.copyWith(
+            content: result.content.updateAll((value) {
+          final n = value.copyWith(simplePathUrl: '/${value.name}');
+          return n.copyWith(dirs: IListConst([n.rootWidget]));
+        }).updateFirst((old) => old.copyWith(active: true)));
+      }
+      state = state.copyWith(mainStorages: result, storageLoading: false);
+    } on GlobalError catch (e) {
+      state = state.copyWith(storageLoading: false, storageError: e);
+    }
   }
 
   ///登录
@@ -119,6 +169,7 @@ class DomainAccountState extends StateNotifier<DomainAccount> {
               AuthLoginParam(username: username, password: password))
           .request(const R(showDefaultLoading: true, loadingText: '登录中'));
       await AccountManager.instance.loginSuccess(response.token);
+      refreshStoragesList();
       ToastUtil.showSuccess('欢迎回来,您已成功登录!');
     } on GlobalError catch (e) {
       ToastUtil.showWarning('登录失败:${e.getMessage()}');
@@ -132,7 +183,7 @@ class DomainAccountState extends StateNotifier<DomainAccount> {
     if (domain != null) {
       Logger().t('更新:$domain');
       ref.read(sitesStateProvider.notifier).change(
-          domain!.isEq,
+          domain.isEq,
           (value) => value.copyWith(
               mainStorages: value.mainStorages.copyWith(
                   content: value.mainStorages.content
@@ -165,7 +216,7 @@ class DomainAccountState extends StateNotifier<DomainAccount> {
   }
 
   void refreshStoragesList() {
-    account._fetchStoragesList();
+    _fetchStoragesList();
   }
 }
 
@@ -203,6 +254,7 @@ class DomainAccount extends ChangeNotifier {
       this.label,
       this.storageError,
       this.mainStorages = const FsListResult(),
+      this.storageLoading = false,
       this.layoutStyle = FilesLayoutStyle.list,
       this.fileOpenModel,
       this.error,
@@ -217,7 +269,6 @@ class DomainAccount extends ChangeNotifier {
   }
 
   void startGetState() {
-    debugPrint('start get data $domain');
     _checkPing();
     _getSetting();
     _fetchStoragesList();
@@ -289,6 +340,10 @@ class DomainAccount extends ChangeNotifier {
   PageModel get activePageByUpload =>
       uploadTaskPages.firstWhere((element) => element.active);
 
+  @Ignore()
+  @igFreezedJson
+  bool storageLoading = false;
+
   ///检测在线状态
   Future<void> _checkPing() async {
     try {
@@ -324,13 +379,21 @@ class DomainAccount extends ChangeNotifier {
     } catch (_) {}
   }
 
+  Future<void> refreshStorage() async {
+    await _fetchStoragesList();
+  }
+
   ///获取存储桶
   Future<void> _fetchStoragesList() async {
     try {
+      if (storageLoading != true) {
+        storageLoading = true;
+      }
       if (storageError != null) {
         storageError = null;
-        notifyListeners();
       }
+      notifyListeners();
+
       mainStorages = const FsListResult();
       var result = await MyFsListApi().request(R(
           showDefaultLoading: false,
@@ -344,10 +407,12 @@ class DomainAccount extends ChangeNotifier {
       }
 
       mainStorages = result;
+      storageLoading = false;
       debugPrint("storages loaded!");
       notifyListeners();
     } on GlobalError catch (e) {
       storageError = e;
+      storageLoading = false;
       notifyListeners();
     }
   }
@@ -393,6 +458,11 @@ class DomainAccount extends ChangeNotifier {
     changeNavigator(
         navigators.firstWhere((element) => element.getId == 'upload'));
     changeNavigatorByUpload(uploadTaskPages[1]);
+  }
+
+  void changeLayout(FilesLayoutStyle newStyle) {
+    layoutStyle = newStyle;
+    notifyListeners();
   }
 
   @override

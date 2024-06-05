@@ -21,7 +21,6 @@ class _CreateNewDomainWidgetState extends State<CreateNewDomainWidget> {
 
   final _focusNode = FocusNode();
   final _focusNode2 = FocusNode();
-  final _focusNode3 = FocusNode();
   final _focusNode4 = FocusNode();
 
   @override
@@ -31,26 +30,52 @@ class _CreateNewDomainWidgetState extends State<CreateNewDomainWidget> {
       content: SingleChildScrollView(
         child: Column(
           children: [
-            TextField(
-              focusNode: _focusNode,
-              controller: _nameCtrl,
-              decoration: const InputDecoration(hintText: '名称', labelText: '名称'),
-              onChanged: (value) {
-                _account = _account.copyWith(name: value);
+            Focus(
+              onKeyEvent: (node, event) {
+                final tvEvent = TvKey.create(event);
+                print('->${tvEvent}');
+                tvEvent.whenOrNull(
+                  down: () {
+                    _focusNode.requestFocus();
+                  },
+                );
+                return KeyEventResult.handled;
               },
-              onEditingComplete: _focusNode2.requestFocus,
+              child: TextField(
+                focusNode: _focusNode,
+                controller: _nameCtrl,
+                decoration: const InputDecoration(hintText: '名称', labelText: '名称'),
+                onChanged: (value) {
+                  _account = _account.copyWith(name: value);
+                },
+                onEditingComplete: _focusNode2.requestFocus,
+                textInputAction: TextInputAction.next,
+              ),
             ),
             const SizedBox(
               height: 6,
             ),
-            TextField(
-              focusNode: _focusNode2,
-              controller: _domainCtrl,
-              decoration: const InputDecoration(hintText: '例子:https://pan.itbug.shop', labelText: '域名/IP'),
-              onChanged: (value) {
-                _account = _account.copyWith(domain: value);
+            Focus(
+              onKeyEvent: (node, event) {
+                final tvEvent = TvKey.create(event);
+                print('->2${tvEvent}');
+                tvEvent.whenOrNull(down: () {
+                  FocusManager.instance.primaryFocus?.focusInDirection(TraversalDirection.down);
+                },);
+                return KeyEventResult.ignored;
               },
-              onEditingComplete: _focusNode3.requestFocus,
+              child: TextField(
+                focusNode: _focusNode2,
+                controller: _domainCtrl,
+                decoration: const InputDecoration(hintText: '例子:https://pan.itbug.shop', labelText: '域名/IP'),
+                onChanged: (value) {
+                  _account = _account.copyWith(domain: value);
+                },
+                textInputAction: TextInputAction.next,
+                onSubmitted: (value) {
+                  FocusManager.instance.primaryFocus?.focusInDirection(TraversalDirection.down);
+                },
+              ),
             ),
             const SizedBox(
               height: 6,
@@ -58,27 +83,24 @@ class _CreateNewDomainWidgetState extends State<CreateNewDomainWidget> {
             TextField(
               controller: _noteCtrl,
               maxLines: 5,
-              focusNode: _focusNode3,
               minLines: 3,
               maxLength: 100,
+              autofocus: true,
+              textInputAction: TextInputAction.next,
               decoration: const InputDecoration(hintText: '备注', labelText: '备注'),
-              onChanged: (value) {
-                _account = _account.copyWith(note: value);
-              },
+              onChanged: (value) => _account = _account.copyWith(note: value),
               onEditingComplete: _focusNode4.requestFocus,
+              onSubmitted: (value) {
+                _focusNode4.requestFocus();
+              },
             ),
             const SizedBox(
               height: 12,
             ),
-            KeyEventWidget(
-              focusNode: _focusNode4,
-              onEvent: (value) {
-                value.whenOrNull(ok: _create);
-              },
-              builder: (focusNode, hasFocus) {
-                return TVContainerWrapper(hasFocus: hasFocus, child: FilledButton( onPressed: _create, child: Text(widget.updateDomain == null ? ' 新建' : '保存编辑')).maxWidthButton);
-              },
-            ),
+            FilledButton(onPressed: _create,
+                focusNode: _focusNode4,
+                child: Text(widget.updateDomain == null ? ' 新建' : '保存编辑'))
+                .maxWidthButton,
             const SizedBox(
               height: 12,
             ),
@@ -119,7 +141,6 @@ class _CreateNewDomainWidgetState extends State<CreateNewDomainWidget> {
   void dispose() {
     _focusNode.dispose();
     _focusNode2.dispose();
-    _focusNode3.dispose();
     super.dispose();
   }
 }

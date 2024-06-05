@@ -12,7 +12,11 @@ class MobileSettingPage extends StatelessWidget {
       backgroundColor:
           context.isDarkModel ? Colors.black : Colors.grey.shade200,
       appBar: AppBar(
-        title: const Text('设置'),
+        title: Text('设置',style: context.textTheme.titleLarge),
+        backgroundColor: Colors.transparent,
+        centerTitle: false,
+        automaticallyImplyLeading: false,
+        leading: null,
       ),
       body: const SettingPage(),
     );
@@ -89,6 +93,7 @@ class SettingPage extends PlatformWidget {
     return CustomScrollView(
       slivers: [
         ...group.keys.map((e) {
+          final subMenus = group[e] ?? [];
           return SliverPadding(
             padding: const EdgeInsets.all(12),
             sliver: SliverMainAxisGroup(slivers: [
@@ -97,8 +102,11 @@ class SettingPage extends PlatformWidget {
                 pinned: true,
               ),
               const SizedBox(height: 6).toSliverWidget,
-              SliverList.list(
-                  children: [...group[e]!.map(_RenderSettingItem.new)])
+              SliverList.list(children: [
+                ...subMenus.map(
+                  (e) => _RenderSettingItem(e, subMenus),
+                )
+              ])
             ]),
           );
         })
@@ -109,8 +117,9 @@ class SettingPage extends PlatformWidget {
 
 class _RenderSettingItem extends PlatformWidget {
   final SettingModel setting;
+  final List<SettingModel> menus;
 
-  const _RenderSettingItem(this.setting);
+  const _RenderSettingItem(this.setting, this.menus);
 
   @override
   Widget buildWithDesktop(
@@ -133,13 +142,25 @@ class _RenderSettingItem extends PlatformWidget {
   @override
   Widget buildWithMobile(
       BuildContext context, WidgetRef ref, DomainAccount domain) {
+    final isFirst = menus.length == 1 || menus.first == setting;
+    final isLast = menus.length == 1 || menus.last == setting;
+    final borderRadius = UiTheme.cardRadius * 2;
+    final radius = BorderRadius.only(
+      topLeft: isFirst ? Radius.circular(borderRadius) : Radius.zero,
+      topRight: isFirst ? Radius.circular(borderRadius) : Radius.zero,
+      bottomLeft: isLast ? Radius.circular(borderRadius) : Radius.zero,
+      bottomRight: isLast ? Radius.circular(borderRadius) : Radius.zero,
+    );
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Container(
-          decoration: BoxDecoration(color: context.cardColor),
+          decoration:
+              BoxDecoration(color: context.cardColor, borderRadius: radius),
           child: ListTile(
+            shape: RoundedRectangleBorder(borderRadius: radius),
             title: Text(setting.subTitle ?? ''),
+            trailing: const CupertinoListTileChevron(),
             onTap: () {
               showModalBottomSheet(
                 context: context,
@@ -169,6 +190,7 @@ class _SettingMobileHeader extends SliverPersistentHeaderDelegate {
   final String title;
 
   _SettingMobileHeader({required this.title});
+
   @override
   Widget build(
       BuildContext context, double shrinkOffset, bool overlapsContent) {

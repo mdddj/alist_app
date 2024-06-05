@@ -17,7 +17,6 @@ class _FilesSinglePageState extends ConsumerState<FilesSinglePage> with Automati
   Widget build(BuildContext context) {
     super.build(context);
     final provider = ref.activeDomain!;
-    final layout = provider.layoutStyle;
     return Scaffold(
       appBar: AppBar(
         scrolledUnderElevation: 5,
@@ -33,34 +32,11 @@ class _FilesSinglePageState extends ConsumerState<FilesSinglePage> with Automati
         ],
       ),
     );
-    return const Text('no active provider');
   }
 
-  SliverGridDelegateWithFixedCrossAxisCount _getAxisCount(
-      {int crossAxisCount = 2,
-      double childAspectRatio = 1.6,
-      double gap = 12}) {
-    return SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: crossAxisCount,
-        mainAxisSpacing: gap,
-        crossAxisSpacing: gap,
-        childAspectRatio: childAspectRatio);
-  }
 
   @override
   bool get wantKeepAlive => true;
 
-  // Widget _itemBuilder(BuildContext context, FsModel item, int index) {
-  //   final requestPath = '${widget.path}/${item.name}';
-  //   return FilesItemLayout(
-  //       fsModel: item.copyWith(simplePathUrl: requestPath),
-  //       onTap: (value) {
-  //         if (value.isDir) {
-  //           MyMobileFilesPage(requestPath, value.name).push(context);
-  //         } else {
-  //           item.manager.showMenuByMobile(context, requestPath);
-  //         }
-  //       });
-  // }
 }
 

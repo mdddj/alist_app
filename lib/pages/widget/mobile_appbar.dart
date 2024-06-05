@@ -19,27 +19,35 @@ class MobileAppbar extends ConsumerWidget implements PreferredSizeWidget {
               elevation: 2,
               shadowColor: context.cardColor,
               borderRadius: BorderRadius.circular(12),
-              child: TextField(
-                decoration: InputDecoration(
-                    hintText: '输入关键字搜索文件',
-                    contentPadding: const EdgeInsets.all(12),
-                    prefixIcon: const Icon(Icons.menu).click(() {
-                      ref.read(menuProvider.notifier).showAppbarMenu();
-                    }),
-                    fillColor: context.cardColor,
-                    suffixIcon: Container(
-                      padding: const EdgeInsets.all(8.0),
-                      constraints:
-                          const BoxConstraints(maxHeight: 22, maxWidth: 22),
-                      alignment: Alignment.centerRight,
-                      child: SvgPicture.asset(
-                        'assets/svg/alist.svg',
+              child: Focus(
+                onKeyEvent: (node, event) {
+                  final tvEvent = TvKey.create(event);
+                  print("event:$tvEvent");
+                  FocusManager.instance.primaryFocus?.focusInDirection(TraversalDirection.down);
+                  return KeyEventResult.ignored;
+                },
+                child: TextField(
+                  decoration: InputDecoration(
+                      hintText: '输入关键字搜索文件',
+                      contentPadding: const EdgeInsets.all(12),
+                      prefixIcon: const Icon(Icons.menu).click(() {
+                        ref.read(menuProvider.notifier).showAppbarMenu();
+                      }),
+                      fillColor: context.cardColor,
+                      suffixIcon: Container(
+                        padding: const EdgeInsets.all(8.0),
+                        constraints:
+                            const BoxConstraints(maxHeight: 22, maxWidth: 22),
+                        alignment: Alignment.centerRight,
+                        child: SvgPicture.asset(
+                          'assets/svg/alist.svg',
+                        ),
                       ),
-                    ),
-                    isDense: true,
-                    enabledBorder: border,
-                    focusedBorder: border,
-                    border: border),
+                      isDense: true,
+                      enabledBorder: border,
+                      focusedBorder: border,
+                      border: border),
+                ),
               )),
         ),
       ),
@@ -96,7 +104,6 @@ class HomeMobileToolbar extends PlatformWidget {
 
   Future<void> _changeLayout(
       BuildContext context, DomainAccount domain) async {
-    final ref =  ProviderScope.containerOf(context);
     final result = await showModalBottomSheet<FilesLayoutStyle>(
       context: context,
       builder: (context) {
@@ -119,7 +126,7 @@ class HomeMobileToolbar extends PlatformWidget {
       },
     );
     if (result != null) {
-     ref.read(myActiveDomainProvider.notifier).changeLayout(result);
+     Future.microtask(() => domain.changeLayout(result));
     }
   }
 }

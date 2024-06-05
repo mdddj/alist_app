@@ -17,14 +17,10 @@ abstract class PlatformWidget extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return pp.Consumer<DomainAccount>(
-      builder: (context, value, child) {
-        final mobileValue = ref.activeDomain;
-        final desktopWidget = buildWithDesktop(context, ref, value);
-        final mobileWidget = buildWithMobile(context, ref,mobileValue ?? value);
-        return myPlatform.isDesktop ? desktopWidget : mobileWidget;
-      },
-    );
+    final active = ref.watch(myActiveDomainProvider);
+    final desktopWidget = buildWithDesktop(context, ref, active);
+    final mobileWidget = buildWithMobile(context, ref, active);
+    return myPlatform.isDesktop ? desktopWidget : mobileWidget;
   }
 }
 
@@ -43,20 +39,6 @@ abstract class BasePlatformWidget extends StatelessWidget {
   Widget buildWithMobile(BuildContext context);
 }
 
-class ActiveApplicationWrapper extends ConsumerWidget {
-  final Widget child;
-
-  const ActiveApplicationWrapper({super.key, required this.child});
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final active = ref.activeDomain;
-    if (active == null) {
-      return child;
-    }
-    return child;
-  }
-}
 
 class ActiveApplicationProviderBuilder extends ConsumerWidget {
   final Widget Function(DomainAccount account) builder;
@@ -71,6 +53,7 @@ class ActiveApplicationProviderBuilder extends ConsumerWidget {
 
 class ProviderDialogWrapper extends ConsumerWidget {
   final Widget child;
+
   const ProviderDialogWrapper({super.key, required this.child});
 
   @override

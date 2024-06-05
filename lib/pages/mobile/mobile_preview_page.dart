@@ -14,6 +14,7 @@ class _MobilePreviewPageState extends ConsumerState<MobilePreviewPage> {
   IList<FileAction> get previewWidget => param.fsModel.fileType.findActions();
 
 
+
   @override
   Widget build(BuildContext context) {
     final defaultWidget = previewWidget.isNotEmpty ? previewWidget.first.render(param.fsModel) : const Center(
@@ -26,6 +27,7 @@ class _MobilePreviewPageState extends ConsumerState<MobilePreviewPage> {
 
   @override
   void initState() {
+    Logger().t(previewWidget);
     super.initState();
   }
 }

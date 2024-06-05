@@ -79,7 +79,7 @@ class SelectPathWidget extends PlatformWidget {
             padding: const EdgeInsets.all(12),
             sliver: DecoratedSliver(
               decoration: BoxDecoration(
-                  color: context.colorScheme.surfaceVariant,
+                  color: context.colorScheme.surfaceContainerHighest,
                   borderRadius: BorderRadius.circular(UiTheme.cardRadius)),
               sliver: SliverPadding(
                 padding: const EdgeInsets.symmetric(vertical: 12),

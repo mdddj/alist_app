@@ -8,12 +8,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart' as pp;
 
 import '../actions/part.dart';
 import '../api/part.dart';
 import '../exception/global.dart';
+import '../provider/app_manager.dart';
 import '../router/router.dart';
 import '../tool/part.dart';
 import '../ui/part.dart';
@@ -22,6 +24,7 @@ import 'base_result.dart';
 import 'my_file.dart';
 import 'my_fs_copy_api_param.dart';
 import 'my_fs_move_file_api_param.dart';
+import 'preview_param.dart';
 
 part 'fs_list.freezed.dart';
 part 'fs_list.g.dart';
@@ -136,10 +139,12 @@ extension FsModelEx on FsModel {
   }
 
   ///复制链接
-  Future<void> copyFullLink() async {
+  Future<void> copyFullLink([WidgetRef? ref]) async {
     if (isDir) {
-      simplePathUrl.copy();
-      showCopySuccessDialog(simplePathUrl);
+      final domain = ref?.activeDomainRead?.domain;
+      final fullUrl = "${domain??""}$simplePathUrl";
+      fullUrl.copy();
+      toast('拷贝成功:$fullUrl');
       return;
     }
     try {
@@ -219,6 +224,10 @@ class FsModel extends ChangeNotifier {
   @igFreezedJson
   bool folderSelectIsActive = false;
 
+  ///同目录下的其他文件
+  @igFreezedJson
+  IList<FsModel> currentDirAllFiles = const IListConst([]);
+
   FsModel(
       {this.name = '',
       this.size = 0,
@@ -236,7 +245,7 @@ class FsModel extends ChangeNotifier {
       this.folderSelectIsActive = false,
       this.setting = const FsModelSetting(),
       this.dirs = const IListConst([]),
-      this.simplePathFolder = ""});
+      this.simplePathFolder = "",this.currentDirAllFiles = const IListConst([])});
 
   @igFreezedJson
   FilesRenderWidget get child {
@@ -279,17 +288,26 @@ class FsModel extends ChangeNotifier {
   @igFreezedJson
   IList<FilesWidget> dirs = IList<FilesWidget>(const []);
 
+  String get formatDateString => _formatIsoTimeString(modified);
+
   //文件或者目录被点击
   void onFileTap(WidgetRef ref, BuildContext context) {
+    if(!isDir && isMobile()){
+      //手机上打开文件
+      Logger().t(toJson());
+      context.push(MyPreviewFilePage().location,extra: PreviewParam(fsModel: this));
+      return;
+    }
     if (root != null && filesWidget != null) {
       if(isMobile()){
         context.push(const MyMobileFilesPage().location,extra: this);
       }else{
         pp.Provider.of<FsModel>(context, listen: false).addDir(filesWidget!);
       }
-
     } else {
-      debugPrint('--root为空');
+      if(isMobile()){
+        context.push(const MyMobileFilesPage().location,extra: this);
+      }
     }
   }
 
@@ -500,3 +518,19 @@ class FilesTree extends StatelessWidget {
     );
   }
 }
+
+
+
+String _formatIsoTimeString(String isoTimeString, {String outputFormat = 'yyyy-MM-dd HH:mm:ss'}) {
+  DateTime dateTime;
+
+  try {
+    dateTime = DateTime.parse(isoTimeString);
+  } catch (e) {
+    return "";
+  }
+
+  final DateFormat outputFormatter = DateFormat(outputFormat);
+  return outputFormatter.format(dateTime);
+}
+

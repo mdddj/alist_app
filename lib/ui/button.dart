@@ -81,10 +81,10 @@ class MyButton extends BasePlatformWidget {
   Widget buildWithMobile(BuildContext context) {
     return KeyEventWidget(
         onEvent: (v) => v.whenOrNull(ok: () => onTap?.call()),
-        builder: (_, hasFocus) {
+        builder: (f, hasFocus) {
           return TVContainerWrapper(
             hasFocus: hasFocus,
-            child: ListTile(
+            child: CupertinoListTile(
               leading: leading,
               title: Text(text, maxLines: 2, overflow: TextOverflow.ellipsis,style: context.textTheme.titleMedium),
               trailing: end,

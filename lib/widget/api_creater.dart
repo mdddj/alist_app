@@ -39,12 +39,12 @@ class ApiCreater<T, A extends MyApiBase<T>> extends StatefulWidget {
   static ApiCreater def<T, A extends MyApiBase<T>>(
       {required ApiCreaterApiBuilder<T, A> builder,
       final ApiCreaterApiParams<T, A>? params,
-      ValueChanged<T>? dataLoaded}) {
+      ValueChanged<T>? dataLoaded,ApiCreaterApiBuilderExceptionBuilder<T, A>? error}) {
     return ApiCreater<T, A>(
         builder: builder,
         params: params,
         dataLoaded: dataLoaded,
-        error: defaultRefreshException,
+        error: error ?? defaultRefreshException,
         loading: defaultLoading);
   }
 }
@@ -70,6 +70,7 @@ class ApiCreaterState<T, A extends MyApiBase<T>>
       });
       final response = await api.request(
           widget.params?.call(this) ?? const R(showDefaultLoading: false));
+      debugPrint("response:$response");
       setState(() {
         _data = response;
         _loading = false;
@@ -81,6 +82,8 @@ class ApiCreaterState<T, A extends MyApiBase<T>>
         _exception = e;
         _loading = false;
       });
+    }catch(e){
+      debugPrint("error catch $e");
     }
   }
 

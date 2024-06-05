@@ -9,8 +9,7 @@ class CreateNewFolder extends PlatformWidget {
   const CreateNewFolder(this.targetContext, {super.key});
 
   @override
-  Widget buildWithDesktop(
-      BuildContext context, WidgetRef ref, DomainAccount domain) {
+  Widget buildWithDesktop(BuildContext context, WidgetRef ref, DomainAccount domain) {
     return MyButton(
         text: '创建新文件夹',
         onTap: () {
@@ -40,8 +39,7 @@ class CreateNewFolderModal extends PlatformWidget {
   }
 
   @override
-  Widget buildWithDesktop(
-      BuildContext context, WidgetRef ref, DomainAccount domain) {
+  Widget buildWithDesktop(BuildContext context, WidgetRef ref, DomainAccount domain) {
     // final path = applicationProvider.routerManager.model.getCurrentRouterPath;// todo 获取path
     final path = '';
     return SingleChildScrollView(
@@ -66,11 +64,9 @@ class CreateNewFolderModal extends PlatformWidget {
                         constraints: const BoxConstraints(minWidth: 250),
                         child: TextField(
                           autofocus: true,
-                          decoration:
-                              const InputDecoration(hintText: '输入文件夹名字'),
+                          decoration: const InputDecoration(hintText: '输入文件夹名字'),
                           onChanged: (value) {
-                            ref.read(_createNewFolderState.notifier).state =
-                                value;
+                            ref.read(_createNewFolderState.notifier).state = value;
                           },
                           onSubmitted: (value) {
                             _submit(path, value);
@@ -105,10 +101,8 @@ class CreateNewFolderModal extends PlatformWidget {
   Future<void> _submit(String path, String text) async {
     targetContext.hideKeyBoard();
     tryRequest(
-      () => MyFsCreateNewFolderApi().request(R(
-          data: {"path": "$path/$text"},
-          showDefaultLoading: true,
-          loadingText: '正在创建文件夹')),
+      () => MyFsCreateNewFolderApi()
+          .request(R(data: {"path": "$path/$text"}, showDefaultLoading: true, loadingText: '正在创建文件夹')),
       success: () {
         targetContext.nav.pop(text);
       },
@@ -121,59 +115,48 @@ class CreateNewFolderModal extends PlatformWidget {
 }
 
 ///弹出操作菜单
-void showFsModalMenu(
-    BuildContext context, FsModel fsModel, RelativeRect position) {
+void showFsModalMenu(BuildContext context, FsModel fsModel, RelativeRect position,WidgetRef ref) {
   // todo 弹出菜单
   // provider.activeFsModel(fsModel);
-  showMenu<String>(
-      context: context,
-      position: position,
-      items: [...getFsModelMenus(fsModel, context)]);
+  showMenu<String>(context: context, position: position, items: [...getFsModelMenus(fsModel,ref, context)]);
 }
 
-void showMenuSheet(FsModel fsModel, BuildContext context) {
+void showMenuSheet(FsModel fsModel,WidgetRef ref, BuildContext context) {
   showModalBottomSheet(
       context: context,
       // isScrollControlled: true,
       builder: (context) {
-        return ActiveApplicationWrapper(
-          child: ScrollWrapper(
-            child: (ctrl) => SingleChildScrollView(
-              controller: ctrl,
-              child: Column(
-                children: [...getFsModelMenus(fsModel, context)],
-              ),
+        return ScrollWrapper(
+          child: (ctrl) => SingleChildScrollView(
+            controller: ctrl,
+            child: Column(
+              children: [...getFsModelMenus(fsModel,ref, context)],
             ),
           ),
         );
       });
 }
 
-List<PopupMenuEntry<String>> getFsModelMenus(
-    FsModel fsModel, BuildContext context) {
-  // todo 获取路径
-  final ref = ProviderScope.containerOf(context);
-  // final currentPath = provider.routerManager.model.getCurrentRouterPath;
-  const currentPath = '';
+List<PopupMenuEntry<String>> getFsModelMenus(FsModel fsModel,WidgetRef ref, BuildContext context) {
   return [
     if (!isMobile()) MyFsModelPopupDetail(fsModel: fsModel),
+    if (!isMobile())
     const PopupMenuDivider(),
-    MyPopupButton(
-      text: '打开',
-      leading: const Icon(Icons.open_in_browser),
-      onTap: () {
-        // fsModel.manager.showMenu(context, provider);
-      },
-    ),
+    if (!isMobile())
+      MyPopupButton(
+        text: '打开',
+        leading: const Icon(Icons.open_in_browser),
+        onTap: () {
+          // fsModel.manager.showMenu(context, provider);
+        },
+      ),
     MyPopupButton(
       text: '复制',
       leading: const Icon(LineIcons.copy),
       ending: const LockingWidget(),
       onTap: () {
-        fsModel.repo?.changeShowRightPanel(RightPanelConfig(
-            title: '复制',
-            child: (close) => FsModelCopyWidget(close, fsModel),
-            width: 300));
+        fsModel.repo?.changeShowRightPanel(
+            RightPanelConfig(title: '复制', child: (close) => FsModelCopyWidget(close, fsModel), width: 300));
       },
     ),
     MyPopupButton(
@@ -181,17 +164,15 @@ List<PopupMenuEntry<String>> getFsModelMenus(
       leading: const Icon(Icons.move_up),
       ending: const LockingWidget(),
       onTap: () {
-        fsModel.repo?.changeShowRightPanel(RightPanelConfig(
-            title: '移动',
-            child: (close) => FsModelMoveWidget(close, fsModel),
-            width: 300));
+        fsModel.repo?.changeShowRightPanel(
+            RightPanelConfig(title: '移动', child: (close) => FsModelMoveWidget(close, fsModel), width: 300));
       },
     ),
     MyPopupButton(
       text: '复制链接',
       leading: const Icon(Icons.link),
       onTap: () {
-        fsModel.copyFullLink();
+        fsModel.copyFullLink(ref);
       },
     ),
     MyPopupButton(
@@ -231,7 +212,7 @@ List<PopupMenuEntry<String>> getFsModelMenus(
           builder: (context) => DownloadSelectPathDialog(fsModel),
         );
         if (response case (final String url, final File file)) {
-          ref.read(uploadTaskProvider.notifier).startDownloadTask(url, file);
+          // ref.read(uploadTaskProvider.notifier).startDownloadTask(url, file);
           // 更新UI
           // ref.read(myActiveDomainProvider.notifier).showDownloadPage();
         }

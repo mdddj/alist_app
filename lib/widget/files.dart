@@ -2,18 +2,17 @@ part of 'part.dart';
 
 class FilesRenderWidget extends PlatformWidget {
   final FsModel fsModel;
+
   const FilesRenderWidget({super.key, required this.fsModel});
 
   @override
-  Widget buildWithDesktop(
-      BuildContext context, WidgetRef ref, DomainAccount domain) {
+  Widget buildWithDesktop(BuildContext context, WidgetRef ref, DomainAccount domain) {
     final currentFileOpen = domain.fileOpenModel;
     return pp.ChangeNotifierProvider(
       create: (context) => fsModel,
       child: ClipRRect(
         borderRadius: BorderRadius.only(
-            topRight: Radius.circular(UiTheme.cardRadius),
-            bottomRight: Radius.circular(UiTheme.cardRadius)),
+            topRight: Radius.circular(UiTheme.cardRadius), bottomRight: Radius.circular(UiTheme.cardRadius)),
         child: Column(
           children: [
             const MainHeader(child: PublicPathWidget()),
@@ -36,8 +35,7 @@ class FilesRenderWidget extends PlatformWidget {
   }
 
   @override
-  Widget buildWithMobile(
-      BuildContext context, WidgetRef ref, DomainAccount domain) {
+  Widget buildWithMobile(BuildContext context, WidgetRef ref, DomainAccount domain) {
     // todo
     // final files = applicationProvider.files;
     // final route = applicationProvider.routerManager.model.router;
@@ -76,8 +74,7 @@ class _MobileRoutersHeader extends SliverPersistentHeaderDelegate {
   const _MobileRoutersHeader();
 
   @override
-  Widget build(
-      BuildContext context, double shrinkOffset, bool overlapsContent) {
+  Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
     return HookConsumer(
       builder: (context, ref, child) {
         if (ref.activeDomain case var model when model != null) {
@@ -111,8 +108,7 @@ class _MobileRoutersHeader extends SliverPersistentHeaderDelegate {
   double get minExtent => 48;
 
   @override
-  bool shouldRebuild(covariant SliverPersistentHeaderDelegate oldDelegate) =>
-      true;
+  bool shouldRebuild(covariant SliverPersistentHeaderDelegate oldDelegate) => true;
 }
 
 class FilesItemLayout extends PlatformWidget {
@@ -120,8 +116,7 @@ class FilesItemLayout extends PlatformWidget {
   final ValueChanged<FsModel>? onTap;
   final ValueChanged<FsModel>? showMenu;
 
-  const FilesItemLayout(
-      {super.key, required this.fsModel, this.onTap, this.showMenu});
+  const FilesItemLayout({super.key, required this.fsModel, this.onTap, this.showMenu});
 
   Widget getName() {
     return Text(
@@ -132,8 +127,7 @@ class FilesItemLayout extends PlatformWidget {
   }
 
   @override
-  Widget buildWithDesktop(
-      BuildContext context, WidgetRef ref, DomainAccount domain) {
+  Widget buildWithDesktop(BuildContext context, WidgetRef ref, DomainAccount domain) {
     return LayoutBuilder(
       builder: (context, constraints) {
         return MyButton(
@@ -145,8 +139,7 @@ class FilesItemLayout extends PlatformWidget {
                 key: ValueKey(fsModel),
                 builder: (isCollect, CollectModel? collectModel) {
                   if (isCollect) {
-                    return const Icon(Icons.favorite, color: Colors.purple)
-                        .click(() async {
+                    return const Icon(Icons.favorite, color: Colors.purple).click(() async {
                       /// todo 删除收藏
                     });
                   }
@@ -173,9 +166,8 @@ class FilesItemLayout extends PlatformWidget {
           onSecondaryTapDown: (detail, action) {
             fsModel.repo?.changeIsSelect(fsModel);
             final offset = detail.globalPosition;
-            final posit = RelativeRect.fromLTRB(
-                offset.dx, offset.dy, offset.dx, offset.dy);
-            showFsModalMenu(context, fsModel, posit);
+            final posit = RelativeRect.fromLTRB(offset.dx, offset.dy, offset.dx, offset.dy);
+            showFsModalMenu(context, fsModel, posit,ref);
           },
         );
       },
@@ -183,8 +175,7 @@ class FilesItemLayout extends PlatformWidget {
   }
 
   @override
-  Widget buildWithMobile(
-      BuildContext context, WidgetRef ref, DomainAccount domain) {
+  Widget buildWithMobile(BuildContext context, WidgetRef ref, DomainAccount domain) {
     return FsItemLayout(
       fsModel: fsModel,
       onClick: onTap,
@@ -196,15 +187,10 @@ class FilesItemLayout extends PlatformWidget {
 class PublicPathWidget extends PlatformWidget {
   const PublicPathWidget({super.key});
 
-  TextStyle? getTextStyle(BuildContext context, bool isLast) =>
-      context.kTextTheme.bodyMedium?.copyWith(
-          fontWeight: isLast ? FontWeight.bold : null,
-          fontSize: isLast
-              ? (context.textTheme.bodyMedium?.fontSize ?? 12) * 1.12
-              : null,
-          color: isLast
-              ? (context.isDarkModel ? Colors.white : Colors.black)
-              : context.colorScheme.secondary);
+  TextStyle? getTextStyle(BuildContext context, bool isLast) => context.kTextTheme.bodyMedium?.copyWith(
+      fontWeight: isLast ? FontWeight.bold : null,
+      fontSize: isLast ? (context.textTheme.bodyMedium?.fontSize ?? 12) * 1.12 : null,
+      color: isLast ? (context.isDarkModel ? Colors.white : Colors.black) : context.colorScheme.secondary);
 
   Widget getNameWidget(String name, BuildContext context, bool isLast,
       {FsModel? fsModel, Widget? ending, VoidCallback? onTap}) {
@@ -213,14 +199,10 @@ class PublicPathWidget extends PlatformWidget {
         return Container(
           padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
           margin: const EdgeInsets.symmetric(horizontal: 3),
-          decoration: BoxDecoration(
-              color: color, borderRadius: BorderRadius.circular(6)),
+          decoration: BoxDecoration(color: color, borderRadius: BorderRadius.circular(6)),
           child: Row(
             mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(name, style: getTextStyle(context, isLast)),
-              if (ending != null) ending
-            ],
+            children: [Text(name, style: getTextStyle(context, isLast)), if (ending != null) ending],
           ),
         );
       },
@@ -232,8 +214,7 @@ class PublicPathWidget extends PlatformWidget {
   }
 
   @override
-  Widget buildWithDesktop(
-      BuildContext context, WidgetRef ref, DomainAccount domain) {
+  Widget buildWithDesktop(BuildContext context, WidgetRef ref, DomainAccount domain) {
     return pp.Consumer<FsModel>(
       builder: (context, value, child) {
         final model = value;
@@ -258,8 +239,7 @@ class PublicPathWidget extends PlatformWidget {
                             isLast,
                             fsModel: element.model,
                             onTap: () {
-                              pp.Provider.of<FsModel>(context, listen: false)
-                                  .toDir(element);
+                              pp.Provider.of<FsModel>(context, listen: false).toDir(element);
                             },
                           ),
                           if (!isLast)
@@ -302,8 +282,7 @@ class PublicPathWidget extends PlatformWidget {
               constraints: const BoxConstraints(maxHeight: 30),
               padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 2),
               decoration: BoxDecoration(
-                  border:
-                      Border.all(color: context.theme.dividerColor, width: .2),
+                  border: Border.all(color: context.theme.dividerColor, width: .2),
                   borderRadius: BorderRadius.circular(6)),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
@@ -381,8 +360,7 @@ class PublicPathWidget extends PlatformWidget {
   }
 
   @override
-  Widget buildWithMobile(
-      BuildContext context, WidgetRef ref, DomainAccount domain) {
+  Widget buildWithMobile(BuildContext context, WidgetRef ref, DomainAccount domain) {
     return buildWithDesktop(context, ref, domain);
   }
 }
@@ -397,6 +375,7 @@ class SvgIcon extends StatelessWidget {
   final String name;
   final double? size;
   final Color? color;
+
   const SvgIcon({super.key, required this.name, this.size, this.color});
 
   @override
@@ -405,8 +384,7 @@ class SvgIcon extends StatelessWidget {
       'assets/svg/icons/$name.svg',
       width: size,
       height: size,
-      colorFilter: ColorFilter.mode(
-          color ?? context.iconColor ?? Colors.grey, BlendMode.srcIn),
+      colorFilter: ColorFilter.mode(color ?? context.iconColor ?? Colors.grey, BlendMode.srcIn),
     );
   }
 }

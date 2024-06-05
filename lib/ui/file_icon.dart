@@ -20,7 +20,7 @@ class FileIcon extends ConsumerWidget {
     final layout = ref.activeDomain!.layoutStyle;
     fileIconSize = switch (layout) {
       FilesLayoutStyle.list => fileIconSize,
-      _ => double.maxFinite
+      _ => iconSize ?? double.maxFinite
     };
     if (thumbnail != null && thumbnail!.isNotEmpty) {
       child = ImageView(

@@ -29,8 +29,7 @@ class CollectDialog extends ConsumerWidget {
     final call = ref.read(collectFolderStoreProvider.notifier);
     final hasSelect =
         ref.collectFolders.any((element) => element.isSelectByAddDialog);
-    return ActiveApplicationWrapper(
-        child: Scaffold(
+    return Scaffold(
       body: CustomScrollView(
         slivers: [
           const SliverPadding(
@@ -47,12 +46,12 @@ class CollectDialog extends ConsumerWidget {
                     isActivated: element.isSelectByAddDialog,
                     onTap: () {
                       call.setNewList(ref.collectFolders.updateAllWhere(
-                          (element) => element.isSelectByAddDialog,
-                          (value) =>
+                              (element) => element.isSelectByAddDialog,
+                              (value) =>
                               value.copyWith(isSelectByAddDialog: false)));
                       call.changeItemProperties(
                           element,
-                          (value) => value.copyWith(
+                              (value) => value.copyWith(
                               isSelectByAddDialog: !value.isSelectByAddDialog));
                     });
               })
@@ -66,19 +65,19 @@ class CollectDialog extends ConsumerWidget {
         child: ref.watch(_collectDialogCheckIsExistProvider(fsModel)).when(
           data: (data) {
             return TextButton(
-                onPressed: hasSelect && data != true
-                    ? () async {
-                  // todo
-                        // final nav = context.nav;
-                        // nav.pop();
-                        // fsModel.actionManager.addToCollect(
-                        //     ApplicationContext(context: context, ref: ref),
-                        //     fsModel);
-                      }
-                    : null,
-                // child: Text(data == true
-                //     ? '已存在于这个收藏夹'
-                //     : (hasSelect ? '添加到收藏夹' : '请选择收藏夹'))
+              onPressed: hasSelect && data != true
+                  ? () async {
+                // todo
+                // final nav = context.nav;
+                // nav.pop();
+                // fsModel.actionManager.addToCollect(
+                //     ApplicationContext(context: context, ref: ref),
+                //     fsModel);
+              }
+                  : null,
+              // child: Text(data == true
+              //     ? '已存在于这个收藏夹'
+              //     : (hasSelect ? '添加到收藏夹' : '请选择收藏夹'))
               child: const Text('添加收藏夹功能暂时禁用'),
             );
           },
@@ -90,6 +89,6 @@ class CollectDialog extends ConsumerWidget {
           },
         ),
       ),
-    ));
+    );
   }
 }

@@ -39,64 +39,62 @@ class _DownloadSelectPathDialogState extends ConsumerState<DownloadSelectPathDia
               ),
               child: SingleChildScrollView(
                 padding: const EdgeInsets.all(30),
-                child: ActiveApplicationWrapper(
-                  child: FetchRawDetailData(
-                    path: model.simplePathUrl,
-                    file: model,
-                    loadingText: '获取下载链接中...',
-                    builder: (detail) {
-                      return Form(
-                        key: _formKey,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              '下载${model.name}到',
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                              style: context.textTheme.titleLarge,
-                            ),
-                            const SizedBox(
-                              height: 12,
-                            ),
-                            Row(children: [
-                              Expanded(
-                                child: TextFormField(
-                                    decoration: const InputDecoration(isDense: true, labelText: '选择下载目录'),
-                                    controller: _pathEditCtrl,
-                                    onChanged: (_) {
-                                      _formKey.currentState?.validate();
-                                      setState(() {});
-                                    },
-                                    validator: _changePath),
-                              ),
-                              const SizedBox(
-                                width: 2,
-                              ),
-                              TextButton(
-                                  onPressed: () {
-                                    MyFileTool().getADirectory().then((value) {
-                                      if (value != null) {
-                                        _pathEditCtrl.text = value.path;
-                                        ref.changeAppSetting((old) => old.copyWith(defaultDownloadPath: value.path));
-                                      }
-                                    });
+                child: FetchRawDetailData(
+                  path: model.simplePathUrl,
+                  file: model,
+                  loadingText: '获取下载链接中...',
+                  builder: (detail) {
+                    return Form(
+                      key: _formKey,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            '下载${model.name}到',
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            style: context.textTheme.titleLarge,
+                          ),
+                          const SizedBox(
+                            height: 12,
+                          ),
+                          Row(children: [
+                            Expanded(
+                              child: TextFormField(
+                                  decoration: const InputDecoration(isDense: true, labelText: '选择下载目录'),
+                                  controller: _pathEditCtrl,
+                                  onChanged: (_) {
+                                    _formKey.currentState?.validate();
+                                    setState(() {});
                                   },
-                                  child: const Text('更改'))
-                            ]),
-                            const SizedBox(
-                              height: 24,
+                                  validator: _changePath),
                             ),
-                            if (myPlatform.isDesktop) Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: _buildActionWidgets(detail)),
-                            if (myPlatform.isMobile)
-                              Column(
-                                children: _buildActionWidgets(detail),
-                              )
-                          ],
-                        ),
-                      );
-                    },
-                  ),
+                            const SizedBox(
+                              width: 2,
+                            ),
+                            TextButton(
+                                onPressed: () {
+                                  MyFileTool().getADirectory().then((value) {
+                                    if (value != null) {
+                                      _pathEditCtrl.text = value.path;
+                                      ref.changeAppSetting((old) => old.copyWith(defaultDownloadPath: value.path));
+                                    }
+                                  });
+                                },
+                                child: const Text('更改'))
+                          ]),
+                          const SizedBox(
+                            height: 24,
+                          ),
+                          if (myPlatform.isDesktop) Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: _buildActionWidgets(detail)),
+                          if (myPlatform.isMobile)
+                            Column(
+                              children: _buildActionWidgets(detail),
+                            )
+                        ],
+                      ),
+                    );
+                  },
                 ),
               ),
             ),
@@ -166,7 +164,7 @@ class _DownloadSelectPathDialogState extends ConsumerState<DownloadSelectPathDia
     if (value != null) {
       final dir = Directory(value);
       if (dir.existsSync() == false) {
-        return "路径不正确";
+        return "无法下载到这个目录";
       }
     }
     return null;

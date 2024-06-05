@@ -9,7 +9,7 @@ extension BaseApiExceptionEx on BaseApiException {
           receiveTimeout: () => "连接超时",
           connectionTimeout: () => "请求超时",
           badCertificate: () => "证书验证失败",
-          connectionError: () => "连接失败",
+          connectionError: () => "连接失败 (Connection Error)",
           sendTimeout: () => "服务超时",
           businessException: (message, error, stackTrace) => message,
           cancel: () => "请求关闭",

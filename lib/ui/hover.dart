@@ -107,7 +107,7 @@ class HoverWidgetState extends ConsumerState<HoverWidget> {
             onEnter: (event) {
               if (!widget.isActivated) {
                 changeHoverColor(
-                    widget.hoverColor ?? context.colorScheme.surfaceVariant);
+                    widget.hoverColor ?? context.colorScheme.surfaceContainerHighest);
               }
               if (_isHove != true) {
                 setState(() {

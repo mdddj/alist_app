@@ -92,7 +92,7 @@ class SelectDomainWidget extends BasePlatformWidget {
                         builder: (color, isHove, controller) {
                           return const Icon(Icons.menu);
                         },
-                        onTap: (context, pos) {
+                        onTap: (ctx, pos) {
                           showMenu<String>(
                               context: context,
                               position: pos,
@@ -141,7 +141,7 @@ class SelectDomainWidget extends BasePlatformWidget {
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Center(
-                        child: Text('没有站点可使用,请添加一个',
+                        child: Text('没有站点可使用,请右上角菜单添加一个',
                             style: context.textTheme.titleMedium),
                       ),
                     ),
@@ -164,8 +164,10 @@ class SelectDomainWidget extends BasePlatformWidget {
                         return TVContainerWrapper(
                           hasFocus: hasFocus,
                           child: Slidable(
+                            closeOnScroll: true,
                             key: ValueKey(e.id),
                             endActionPane: ActionPane(
+                              extentRatio: 0.3,
                               motion: const ScrollMotion(),
                               children: [
                                 SlidableAction(
@@ -185,8 +187,10 @@ class SelectDomainWidget extends BasePlatformWidget {
                                   foregroundColor:
                                       context.colorScheme.inversePrimary,
                                   icon: LineIcons.edit,
+                                  flex: 1,
                                 ),
                                 SlidableAction(
+                                  flex: 1,
                                   onPressed: (context) {
                                     AccountManager.instance.delete(e).then(
                                         (value) =>
@@ -198,38 +202,24 @@ class SelectDomainWidget extends BasePlatformWidget {
                                 ),
                               ],
                             ),
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: ListTile(
-                                title: Text(e.name),
-                                subtitle:
-                                    e.note.isNotEmpty ? Text(e.note) : null,
-                                leading: Container(
-                                    padding: const EdgeInsets.all(4),
-                                    decoration: BoxDecoration(
-                                        color: context.colorScheme.secondary
-                                            .withOpacity(.1),
-                                        borderRadius:
-                                            BorderRadius.circular(12)),
-                                    child: _DomainLogo(item: e)),
-                                trailing: _Ping(domain: e),
-                                onTap: () async {
-                                  ref.switchApplication(e).then((value) {
-                                    const MyMobileIndexPage().go(context);
-                                  });
-                                },
-                              ),
+                            child: CupertinoListTile(
+                              title: Text(e.name),
+                              subtitle:
+                                  e.note.isNotEmpty ? Text(e.note) : null,
+                              leading: _DomainLogo(item: e),
+                              trailing: _Ping(domain: e),
+                              onTap: () async {
+                                ref.switchApplication(e).then((value) {
+                                  const MyMobileIndexPage().go(context);
+                                });
+                              },
                             ),
                           ),
                         );
                       });
                     },
                     separatorBuilder: (BuildContext context, int index) {
-                      return Container(
-                        height: .1,
-                        decoration:
-                            BoxDecoration(color: context.theme.dividerColor),
-                      );
+                      return const Divider();
                     },
                   ),
                 ),
@@ -490,7 +480,6 @@ class _CreateNew extends ConsumerWidget {
   }
 }
 
-
 class DomainLogo extends StatelessWidget {
   final DomainAccount item;
 
@@ -509,32 +498,34 @@ class _DomainLogo extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final size = isMobile() ? 50.0 : 30.0;
-    final setting = item.setting;
-    final logo = setting.getLogo();
-    final imageParam = ImageParams(
-        size: size,
-        printError: false,
-        fit: BoxFit.cover,
-        enableMemoryCache: true,
-        clearMemoryCacheIfFailed: true,
-        errorWidget: const _DefaultLogo(),
-        borderRadius: BorderRadius.circular(size / 2),
-        shape: BoxShape.circle);
-    if (logo.contains("data:image/jpg;base64") ||
-        logo.contains("data:image/png;base64")) {
-      return ImageView(
-          image: MyImage.base64(base64Code: logo, params: imageParam));
-    }
-    if (logo.urlManager.withoutExtension == 'svg') {
-      return SvgPicture.network(
-        logo,
-        width: size,
-        height: size,
-      );
-    } else {
-      return ImageView(image: MyImage.network(url: logo, params: imageParam));
-    }
+    return LayoutBuilder(builder: (context, constraints) {
+      final size = isMobile() ? constraints.maxHeight : 30.0;
+      final setting = item.setting;
+      final logo = setting.getLogo();
+      final imageParam = ImageParams(
+          size: size,
+          printError: false,
+          fit: BoxFit.cover,
+          enableMemoryCache: true,
+          clearMemoryCacheIfFailed: true,
+          errorWidget: const _DefaultLogo(),
+          borderRadius: BorderRadius.circular(size / 2),
+          shape: BoxShape.circle);
+      if (logo.contains("data:image/jpg;base64") ||
+          logo.contains("data:image/png;base64")) {
+        return ImageView(
+            image: MyImage.base64(base64Code: logo, params: imageParam));
+      }
+      if (logo.urlManager.withoutExtension == 'svg') {
+        return SvgPicture.network(
+          logo,
+          width: size,
+          height: size,
+        );
+      } else {
+        return ImageView(image: MyImage.network(url: logo, params: imageParam));
+      }
+    },);
   }
 }
 
@@ -642,7 +633,7 @@ class _AsyncButton extends ConsumerWidget {
   const _AsyncButton();
 
   static void show(BuildContext context, WidgetRef ref) {
-    showModalBottomSheet<DartTypeModel>(
+    showDialog<DartTypeModel>(
       context: context,
       builder: (context) {
         return const _ImportForCloud();
@@ -697,20 +688,18 @@ class _ImportForCloudState extends State<_ImportForCloud> {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(12),
-      child: SpaceColumn(
+    return AlertDialog(
+      title: const Text('导入远程'),
+      content: SpaceColumn(
         space: 20,
         children: [
-          TextField(
+          CupertinoTextField(
             onChanged: (value) {
               setState(() {
                 text = value;
               });
             },
-            decoration: const InputDecoration(
-                hintText: '导入远程json',
-                helperText: '提示:该url需要返回有效的站点列表json,参考导出格式'),
+            placeholder: '输入远程json链接',
           ),
           FilledButton(
                   onPressed:

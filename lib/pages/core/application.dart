@@ -18,38 +18,41 @@ class ApplicationWidget extends PlatformWidget {
 
   /// 手机端布局
   @override
-  Widget buildWithMobile(
-      BuildContext context, WidgetRef ref, DomainAccount domain) {
-    debugPrint("--domain $domain");
+  Widget buildWithMobile(BuildContext context, WidgetRef ref, DomainAccount domain) {
     final storages = domain.mainStorages.content;
     final layout = domain.layoutStyle;
     return Scaffold(
       drawer: const MobileLeftDrawerWidget(),
-      body: CustomScrollView(
-        slivers: [
-          const MobileAppbar(),
-          const HomeMobileToolbar().toSliverWidget,
-          const _MobileIndexStateWidget(),
-          switch (layout) {
-            FilesLayoutStyle.list => SliverPadding(
-                padding: const EdgeInsets.symmetric(horizontal: 12),
-                sliver: SliverList.list(children: [
-                  ...storages.map((element) => FsItemLayout(
-                        fsModel: element,
-                        onClick: (v) => onClick(v, context),
-                      ))
-                ]),
-              ),
-            FilesLayoutStyle.grid =>
-              _GridRenderLayout(storages: storages, onClick: onClick),
-          }
-        ],
-      ).editPage,
+      body: RefreshIndicator(
+        key: ValueKey(domain.domain),
+        onRefresh: () async {
+          ref.activeDomainFun.startGetState();
+        },
+        child: CustomScrollView(
+          slivers: [
+            const MobileAppbar(),
+            const HomeMobileToolbar().toSliverWidget,
+            const _MobileIndexStateWidget(),
+            switch (layout) {
+              FilesLayoutStyle.list => SliverPadding(
+                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                  sliver: SliverList.list(children: [
+                    ...storages.map((element) => FsItemLayout(
+                          fsModel: element,
+                          onClick: (v) => onClick(v, context),
+                        ))
+                  ]),
+                ),
+              FilesLayoutStyle.grid => _GridRenderLayout(storages: storages, onClick: onClick),
+            }
+          ],
+        ).editPage,
+      ),
     );
   }
 
   void onClick(FsModel value, BuildContext context) {
-    context.push(const MyMobileFilesPage().location,extra: value);
+    context.push(const MyMobileFilesPage().location, extra: value);
   }
 }
 
@@ -57,22 +60,17 @@ class ApplicationMainWidget extends PlatformWidget {
   const ApplicationMainWidget({super.key});
 
   @override
-  Widget buildWithDesktop(
-      BuildContext context, WidgetRef ref, DomainAccount domain) {
+  Widget buildWithDesktop(BuildContext context, WidgetRef ref, DomainAccount domain) {
     return Expanded(
       child: IndexedStack(
         index: domain.navigators.indexOf(domain.activePage),
-        children: [
-          ...domain.navigators
-              .map((element) => element.child ?? const SizedBox.shrink())
-        ],
+        children: [...domain.navigators.map((element) => element.child ?? const SizedBox.shrink())],
       ),
     );
   }
 
   @override
-  Widget buildWithMobile(
-      BuildContext context, WidgetRef ref, DomainAccount domain) {
+  Widget buildWithMobile(BuildContext context, WidgetRef ref, DomainAccount domain) {
     return const SizedBox.shrink();
   }
 }
@@ -92,9 +90,11 @@ class _GridRenderLayout extends ConsumerWidget {
         mainAxisSpacing: 12,
         crossAxisSpacing: 12,
         children: [
-          ...storages.map((element) => FsItemLayout(
+          ...storages.map((element) => GridFsModelLayout(
                 fsModel: element,
-                onClick: (v) => onClick(v, context),
+                onClick: (value) {
+                  value.onFileTap(ref, context);
+                },
               ))
         ],
       ),
@@ -108,7 +108,14 @@ class _MobileIndexStateWidget extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final DomainAccount(:storageError) = ref.activeDomain!;
+    final DomainAccount(:storageError, :storageLoading, :mainStorages) = ref.watch(myActiveDomainProvider);
+    if (storageLoading) {
+      return const SliverFillRemaining(
+        child: Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
     if (storageError != null) {
       return SliverFillRemaining(
         child: Center(
@@ -119,22 +126,29 @@ class _MobileIndexStateWidget extends ConsumerWidget {
                 padding: const EdgeInsets.all(8.0),
                 child: Center(
                   child: Text(storageError.getMessage(),
-                      style: context.textTheme.titleMedium,
-                      textAlign: TextAlign.center),
+                      style: context.textTheme.titleMedium, textAlign: TextAlign.center),
                 ),
               ),
               const SizedBox(height: 12),
               switch (storageError) {
-                TokenExpireError() || NoPermissionError() => const FilledButton(
-                    onPressed: showLoginDialog, child: Text('登录')),
-                _ => OutlinedButton(
-                    onPressed: () => ref.activeDomainFun.refreshStoragesList(),
-                    child: const Text('刷新'))
+                TokenExpireError() || NoPermissionError() => KeyEventWidget(
+                    builder: (focusNode, hasFocus) {
+                      return TVContainerWrapper(
+                          hasFocus: hasFocus, child: const FilledButton(onPressed: showLoginDialog, child: Text('登录')));
+                    },
+                  ),
+                _ => OutlinedButton(onPressed: () => ref.activeDomainFun.refreshStoragesList(), child: const Text('刷新'))
               }
             ],
           ),
         ),
       );
+    }
+    if (mainStorages.content.isEmpty) {
+      return const SliverFillRemaining(
+          child: Center(
+        child: Text('暂无资源'),
+      ));
     }
     return const SliverToBoxAdapter();
   }

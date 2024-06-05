@@ -12,8 +12,6 @@ class SettingWithTheme extends PlatformWidget {
       children: [...CustomAppThemeData.values.map(_RenderItem.new)],
     );
   }
-
-
 }
 
 class _RenderItem extends PlatformWidget {

@@ -32,23 +32,21 @@ class MyPopupButton<T> extends PopupMenuEntry<T> {
 class _MyPopupButtonState extends State<MyPopupButton> {
   @override
   Widget build(BuildContext context) {
-    return ActiveApplicationWrapper(
-      child: MyButton(
-        leading: widget.leading,
-        dangerous: widget.dangerous,
-        text: widget.text,
-        isActivated: widget.isActive ?? false,
-        onTap: () {
-          Navigator.pop(context);
-          Future.delayed(Duration.zero, () {
-            WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-              widget.onTap?.call();
-            });
+    return MyButton(
+      leading: widget.leading,
+      dangerous: widget.dangerous,
+      text: widget.text,
+      isActivated: widget.isActive ?? false,
+      onTap: () {
+        Navigator.pop(context);
+        Future.delayed(Duration.zero, () {
+          WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+            widget.onTap?.call();
           });
-        },
-        end: widget.ending,
-        margin: const EdgeInsets.symmetric(horizontal: 6),
-      ),
+        });
+      },
+      end: widget.ending,
+      margin: const EdgeInsets.symmetric(horizontal: 6),
     );
   }
 }
@@ -74,36 +72,34 @@ class MyFsModelPopupDetail<T> extends PopupMenuEntry<T> {
 class _MyFsModelPopupDetailState extends State<MyFsModelPopupDetail> {
   @override
   Widget build(BuildContext context) {
-    return ActiveApplicationWrapper(
-      child: HoverWidget(
-        builder: (color, isHove, controller) {
-          return Container(
-            color: color,
-            padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 4),
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(minWidth: 120),
-              child: Padding(
-                padding: const EdgeInsets.all(2.0),
-                child: Row(
-                  children: [
-                    widget.fsModel.getIcon(size: widget.iconSize),
-                    const SizedBox(width: 5),
-                    Expanded(
-                      child: Text(
-                        widget.fsModel.name,
-                        maxLines: 3,
-                        overflow: TextOverflow.ellipsis,
-                        style: context.textTheme.titleSmall
-                            ?.copyWith(fontWeight: FontWeight.bold),
-                      ),
+    return HoverWidget(
+      builder: (color, isHove, controller) {
+        return Container(
+          color: color,
+          padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 4),
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(minWidth: 120),
+            child: Padding(
+              padding: const EdgeInsets.all(2.0),
+              child: Row(
+                children: [
+                  widget.fsModel.getIcon(size: widget.iconSize),
+                  const SizedBox(width: 5),
+                  Expanded(
+                    child: Text(
+                      widget.fsModel.name,
+                      maxLines: 3,
+                      overflow: TextOverflow.ellipsis,
+                      style: context.textTheme.titleSmall
+                          ?.copyWith(fontWeight: FontWeight.bold),
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
-          );
-        },
-      ),
+          ),
+        );
+      },
     );
   }
 }
@@ -129,14 +125,12 @@ class _MyPopupTitleState extends State<MyPopupTitle> {
 
   @override
   Widget build(BuildContext context) {
-    return ActiveApplicationWrapper(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 8),
-        child: Text(
-          widget.title,
-          style: context.textTheme.titleMedium
-              ?.copyWith(fontSize: 20, fontWeight: FontWeight.bold),
-        ),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8),
+      child: Text(
+        widget.title,
+        style: context.textTheme.titleMedium
+            ?.copyWith(fontSize: 20, fontWeight: FontWeight.bold),
       ),
     );
   }

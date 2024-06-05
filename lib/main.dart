@@ -29,55 +29,51 @@ Future<void> main() async {
   runApp(const ProviderScope(child: MyApp()));
 }
 
+///
 class MyApp extends ConsumerWidget {
   const MyApp({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final fontFamily = ref.appSetting.font;
-    return TVApp(
-      child: PointerRecordWidget(
-        child: ThemeBuildWidget(
-          themeBuild: (theme) {
-            var find =
-                CustomAppThemeData.values.toIList().get(theme.themeIndex);
-            final appTheme = UiTheme().builder(
-                MyAppTheme.getTheme(theme.themeIndex), context,
-                fontFamily: fontFamily);
-            return MaterialApp.router(
-              title: appName,
-              theme: appTheme,
-              routerConfig: routers,
-              darkTheme: UiTheme().builderWithDark(
-                  MyAppTheme.getDarkTheme(scheme: find.flexScheme), context,
-                  fontFamily: myPlatform.whenOrNull(
-                        macos: () => '.SF Pro Text',
-                        ios: () => '.SF Pro Text',
-                      ) ??
-                      fontFamily),
-              themeMode: ThemeMode.light,
-              debugShowCheckedModeBanner: false,
-              builder: ToastWrapper.init(
-                  toastBuilder: DefaultToast.new,
-                  builder: (ctx, widget) {
-                    return MediaQuery(
-                        data: MediaQuery.of(ctx).copyWith(
-                            boldText: false,
-                            textScaler: TextScaler.linear(myPlatform.whenOrNull(
-                                  macos: () => ref.appSetting.fontZoom,
-                                  ios: () => ref.appSetting.fontZoom,
-                                ) ??
-                                1)),
-                        child: widget ?? const SizedBox.shrink());
-                  },
-                  loadingBuilder: (msg) => FullLoading(text: msg),
-                  notifyStyle: const FlutterSmartNotifyStyle(
-                      warningBuilder: DefaultWarningBuilder.new,
-                      successBuilder: DefaultSuccessBuilder.new)),
-            );
-          },
-        ),
-      ),
+    return ThemeBuildWidget(
+      themeBuild: (theme) {
+        var find =
+            CustomAppThemeData.values.toIList().get(theme.themeIndex);
+        final appTheme = UiTheme().builder(
+            MyAppTheme.getTheme(theme.themeIndex), context,
+            fontFamily: fontFamily);
+        return MaterialApp.router(
+          title: appName,
+          // theme: appTheme,
+          routerConfig: routers,
+          darkTheme: UiTheme().builderWithDark(
+              MyAppTheme.getDarkTheme(scheme: find.flexScheme), context,
+              fontFamily: myPlatform.whenOrNull(
+                    macos: () => '.SF Pro Text',
+                  ) ??
+                  fontFamily),
+          themeMode: ThemeMode.light,
+          debugShowCheckedModeBanner: false,
+          builder: ToastWrapper.init(
+              toastBuilder: DefaultToast.new,
+              builder: (ctx, widget) {
+                return MediaQuery(
+                    data: MediaQuery.of(ctx).copyWith(
+                        boldText: false,
+                        textScaler: TextScaler.linear(myPlatform.whenOrNull(
+                              macos: () => ref.appSetting.fontZoom,
+                              ios: () => ref.appSetting.fontZoom,
+                            ) ??
+                            1)),
+                    child: widget ?? const SizedBox.shrink());
+              },
+              loadingBuilder: (msg) => FullLoading(text: msg),
+              notifyStyle: const FlutterSmartNotifyStyle(
+                  warningBuilder: DefaultWarningBuilder.new,
+                  successBuilder: DefaultSuccessBuilder.new)),
+        );
+      },
     );
   }
 }
