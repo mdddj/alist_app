@@ -9,7 +9,7 @@ class LockingWidget extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return Loader(load: () => AccountManager.instance.getAuthToken(),builder: (context, value) {
       if(value==null || value.isEmpty){
-        return const Tooltip(message: '需要登录',child: Icon(LineIcons.lock,color: Colors.grey),);
+        return  Tooltip(message: '需要登录',child: Text('需要管理员权限',style: context.textTheme.labelMedium));
       }
       return const SizedBox.shrink();
     },);

@@ -155,6 +155,9 @@ List<PopupMenuEntry<String>> getFsModelMenus(FsModel fsModel,WidgetRef ref, Buil
       leading: const Icon(LineIcons.copy),
       ending: const LockingWidget(),
       onTap: () {
+        showModalBottomSheet(context: context, builder: (context) {
+          return const MyFileSelecter();
+        },isScrollControlled: true,constraints: BoxConstraints(maxHeight: context.screenHeight * 0.8));
         fsModel.repo?.changeShowRightPanel(
             RightPanelConfig(title: '复制', child: (close) => FsModelCopyWidget(close, fsModel), width: 300));
       },

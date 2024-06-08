@@ -40,20 +40,18 @@ class MyApp extends ConsumerWidget {
       themeBuild: (theme) {
         var find =
             CustomAppThemeData.values.toIList().get(theme.themeIndex);
-        final appTheme = UiTheme().builder(
-            MyAppTheme.getTheme(theme.themeIndex), context,
-            fontFamily: fontFamily);
+        UiTheme().builderWithDark(
+            MyAppTheme.getDarkTheme(scheme: find.flexScheme), context,
+            fontFamily: myPlatform.whenOrNull(
+              macos: () => '.SF Pro Text',
+            ) ??
+                fontFamily);
         return MaterialApp.router(
           title: appName,
-          // theme: appTheme,
+          theme: ThemeData.light(),
           routerConfig: routers,
-          darkTheme: UiTheme().builderWithDark(
-              MyAppTheme.getDarkTheme(scheme: find.flexScheme), context,
-              fontFamily: myPlatform.whenOrNull(
-                    macos: () => '.SF Pro Text',
-                  ) ??
-                  fontFamily),
-          themeMode: ThemeMode.light,
+          darkTheme: ThemeData.dark(),
+          themeMode: ThemeMode.system,
           debugShowCheckedModeBanner: false,
           builder: ToastWrapper.init(
               toastBuilder: DefaultToast.new,

@@ -18,6 +18,7 @@ import '../models/my_file.dart';
 import '../provider/app_manager.dart';
 import '../provider/part.dart';
 import '../provider/upload_task.dart';
+import '../selecter/part.dart';
 import '../tool/part.dart';
 import '../widget/part.dart';
 

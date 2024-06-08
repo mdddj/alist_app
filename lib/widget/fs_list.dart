@@ -67,10 +67,12 @@ class FsItemLayout extends PlatformWidget {
                     // isScrollControlled: true,
                     builder: (context) {
                       return ScrollWrapper(
-                        child: (ctrl) => SingleChildScrollView(
-                          controller: ctrl,
-                          child: Column(
-                            children: [...getFsModelMenus(fsModel,ref, context)],
+                        child: (ctrl) => Padding(
+                          padding: const EdgeInsets.all(12.0),
+                          child: Wrap(
+                            children: [
+                              ...getFsModelMenus(fsModel,ref, context)
+                            ],
                           ),
                         ),
                       );
