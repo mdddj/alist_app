@@ -8,6 +8,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:get_it/get_it.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:media_kit/media_kit.dart';
 
 import 'models/app_setting.dart';
 import 'router/router.dart';
@@ -26,6 +27,7 @@ Future<void> main() async {
   await IsarTool.instance.init();
   HttpOverrides.global = MyHttpOverrides();
   instanceInit();
+  MediaKit.ensureInitialized();
   runApp(const ProviderScope(child: MyApp()));
 }
 

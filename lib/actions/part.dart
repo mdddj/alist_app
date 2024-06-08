@@ -15,6 +15,9 @@ import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:logger/logger.dart';
+import 'package:media_kit/media_kit.dart';
+import 'package:media_kit_video/media_kit_video.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:video_player/video_player.dart';
 
 import '../api/part.dart';
@@ -37,6 +40,7 @@ part 'action_menu.dart';
 part 'image.dart';
 part 'json.dart';
 part 'md.dart';
+part 'media_kit.dart';
 part 'pdf.dart';
 part 'preview.dart';
 part 'txt.dart';

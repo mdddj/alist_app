@@ -7,6 +7,7 @@ class VideoAction extends FileAction {
 
   @override
   Widget render(FsModel file) {
+
     return VideoActionWidget(
       file: file,
     );
@@ -36,10 +37,11 @@ class _VideoActionWidgetState extends ConsumerState<VideoActionWidget> {
   Widget build(BuildContext context) {
     return ApiCreater.def<FsDetailInfo, MyFsDetailGetApi>(
       builder: (data, context, state) {
-        return VideoWidget(
-          playUrl: data.rawUrl,
-          model: fileModel,
-        );
+        return MediaKitPlayer(url: data.rawUrl, model: fileModel);
+        // return VideoWidget(
+        //   playUrl: data.rawUrl,
+        //   model: fileModel,
+        // );
       },
       params: (state) => RequestParams(
           data: {"path": fileModel.simplePathUrl}, showDefaultLoading: false),
