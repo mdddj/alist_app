@@ -10,11 +10,9 @@ class LoginDialog extends ConsumerStatefulWidget {
 
   @override
   ConsumerState<LoginDialog> createState() => _LoginDialogState();
-
 }
 
 class _LoginDialogState extends ConsumerState<LoginDialog> {
-
   final usernameCtrl = TextEditingController();
   final passwordCtrl = TextEditingController();
 
@@ -38,7 +36,9 @@ class _LoginDialogState extends ConsumerState<LoginDialog> {
             TextField(
               controller: passwordCtrl,
               obscureText: true,
-              decoration: const InputDecoration(labelText: '密码',),
+              decoration: const InputDecoration(
+                labelText: '密码',
+              ),
               onSubmitted: (value) {
                 submit();
               },
@@ -52,18 +52,18 @@ class _LoginDialogState extends ConsumerState<LoginDialog> {
         const SizedBox(
           width: 6,
         ),
-        FilledButton(
-            onPressed: submit,
-            child: const Text("登录"))
+        FilledButton(onPressed: submit, child: const Text("登录"))
       ],
     );
   }
 
-  void submit(){
-    SmartDialog.dismiss(tag: LoginDialog.tag);
+  Future<void> submit() async {
+    final account = ref.activeDomainRead;
     final username = usernameCtrl.text;
     final password = passwordCtrl.text;
-    ref.activeDomainFun.login(username, password);
-
+    final result = await account.login(username, password);
+    if (result) {
+      SmartDialog.dismiss(tag: LoginDialog.tag);
+    }
   }
 }

@@ -96,7 +96,6 @@ class FsActionManager with ChangeNotifier {
   Future<CollectModel> addToCollect(
       ApplicationContext applicationContext, FsModel fsModel) async {
     final ApplicationContext(:ref) = applicationContext;
-    final provider = ref.activeDomainFun;
     // todo 获取完整的路径
     // final fullPath = provider.getFullPath(fsModel);
     final fullPath = '';

@@ -45,6 +45,8 @@ abstract class _$DomainAccountCWProxy {
 
   DomainAccount uploadTaskPages(IList<PageModel> uploadTaskPages);
 
+  DomainAccount empty(bool empty);
+
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `DomainAccount(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
   /// Usage
@@ -71,6 +73,7 @@ abstract class _$DomainAccountCWProxy {
     DomainAccountStatus? status,
     IList<PageModel>? navigators,
     IList<PageModel>? uploadTaskPages,
+    bool? empty,
   });
 }
 
@@ -146,6 +149,9 @@ class _$DomainAccountCWProxyImpl implements _$DomainAccountCWProxy {
       this(uploadTaskPages: uploadTaskPages);
 
   @override
+  DomainAccount empty(bool empty) => this(empty: empty);
+
+  @override
 
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `DomainAccount(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
@@ -173,6 +179,7 @@ class _$DomainAccountCWProxyImpl implements _$DomainAccountCWProxy {
     Object? status = const $CopyWithPlaceholder(),
     Object? navigators = const $CopyWithPlaceholder(),
     Object? uploadTaskPages = const $CopyWithPlaceholder(),
+    Object? empty = const $CopyWithPlaceholder(),
   }) {
     return DomainAccount(
       domain: domain == const $CopyWithPlaceholder() || domain == null
@@ -256,6 +263,10 @@ class _$DomainAccountCWProxyImpl implements _$DomainAccountCWProxy {
           ? _value.uploadTaskPages
           // ignore: cast_nullable_to_non_nullable
           : uploadTaskPages as IList<PageModel>,
+      empty: empty == const $CopyWithPlaceholder() || empty == null
+          ? _value.empty
+          // ignore: cast_nullable_to_non_nullable
+          : empty as bool,
     );
   }
 }

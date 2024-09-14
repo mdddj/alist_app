@@ -19,11 +19,12 @@ abstract class PlatformWidget extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final active = ref.watch(myActiveDomainProvider);
-    final desktopWidget = buildWithDesktop(context, ref, active);
-    final mobileWidget = buildWithMobile(context, ref, active);
-    debugPrint("is desktop:${myPlatform.isDesktop}");
-    return myPlatform.isDesktop ? desktopWidget : mobileWidget;
+   return pp.Consumer<DomainAccount>(builder: (BuildContext context, DomainAccount value, Widget? child) {
+     final active = value;
+     final desktopWidget = buildWithDesktop(context, ref, active);
+     final mobileWidget = buildWithMobile(context, ref, active);
+     return myPlatform.isDesktop ? desktopWidget : mobileWidget;
+   },);
   }
 }
 
@@ -34,7 +35,6 @@ abstract class BasePlatformWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final desktopWidget = buildWithDesktop(context);
     final mobileWidget = buildWithMobile(context);
-    debugPrint("is desktop: ${myPlatform.isDesktop}");
     return myPlatform.isDesktop ? desktopWidget : mobileWidget;
   }
 

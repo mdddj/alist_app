@@ -132,7 +132,7 @@ class _DownloadSelectPathDialogState extends ConsumerState<DownloadSelectPathDia
         children: [
           OutlinedButton(
               onPressed: () {
-                context.pop();
+                GoRouter.of(context).pop();
               },
               child: const Text('取消')),
           FilledButton(

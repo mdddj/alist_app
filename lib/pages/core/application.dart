@@ -9,7 +9,6 @@ class ApplicationWidget extends PlatformWidget {
   /// 桌面端使用横向布局
   @override
   Widget buildWithDesktop(BuildContext context, _, DomainAccount domain) {
-    debugPrint(">>>domain desktop:$domain");
     return const Scaffold(
       body: Row(
         children: [NavBar(), ApplicationMainWidget()],
@@ -22,13 +21,11 @@ class ApplicationWidget extends PlatformWidget {
   Widget buildWithMobile(BuildContext context, WidgetRef ref, DomainAccount domain) {
     final storages = domain.mainStorages.content;
     final layout = domain.layoutStyle;
-    debugPrint(">>> mobile.");
     return Scaffold(
       drawer: const MobileLeftDrawerWidget(),
       body: RefreshIndicator(
         key: ValueKey(domain.domain),
         onRefresh: () async {
-          ref.activeDomainFun.startGetState();
         },
         child: CustomScrollView(
           slivers: [
@@ -110,7 +107,7 @@ class _MobileIndexStateWidget extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final DomainAccount(:storageError, :storageLoading, :mainStorages) = ref.watch(myActiveDomainProvider);
+    final DomainAccount(:storageError, :storageLoading, :mainStorages) = ref.activeDomain;
     if (storageLoading) {
       return const SliverFillRemaining(
         child: Center(
@@ -139,7 +136,7 @@ class _MobileIndexStateWidget extends ConsumerWidget {
                           hasFocus: hasFocus, child: const FilledButton(onPressed: showLoginDialog, child: Text('登录')));
                     },
                   ),
-                _ => OutlinedButton(onPressed: () => ref.activeDomainFun.refreshStoragesList(), child: const Text('刷新'))
+                _ => OutlinedButton(onPressed: () {}, child: const Text('刷新'))
               }
             ],
           ),

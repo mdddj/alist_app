@@ -5,24 +5,18 @@ import 'package:dd_js_util/dd_js_util.dart';
 import 'package:dd_js_util/model/models.dart';
 import 'package:fast_immutable_collections/fast_immutable_collections.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:isar/isar.dart';
-import 'package:logger/logger.dart';
 
 import '../account/part.dart';
 import '../api/part.dart';
 import '../exception/global.dart';
 import '../pages/part.dart';
-import '../provider/app_manager.dart';
-import '../provider/sites_provider.dart';
-import '../tool/part.dart';
 import 'auth_login.dart';
 import 'file_open_model.dart';
 import 'fs_list.dart';
 import 'page_model.dart';
 import 'site_setting.dart';
-import 'upload_task_model.dart';
 
 part 'domain_account.g.dart';
 
@@ -80,132 +74,6 @@ extension DomainAccountEx on DomainAccount {
 
 enum DomainAccountStatus { none, ping, error }
 
-final myActiveDomainProvider = StateNotifierProvider<DomainAccountState, DomainAccount>((ref) {
-  final find = ref.activeDomain ?? DomainAccount();
-  return DomainAccountState(find, ref);
-});
-
-///状态管理
-class DomainAccountState extends StateNotifier<DomainAccount> {
-  final Ref ref;
-
-  DomainAccountState(super.account, this.ref) {
-    startGetState();
-  }
-
-  void startGetState() {
-    _fetchStoragesList();
-  }
-
-  ///异步更新网站设置
-  void asyncUpdateSitSetting() {
-    tryRequest<SiteSetting>(() => MyPublicGetSettingApi().request());
-  }
-
-  ///检测在线状态
-  Future<void> _checkPing() async {
-    try {
-      var DomainAccount(:status) = state;
-      state = state.copyWith.error(null);
-      final api = MyPublicPingApi();
-      final response = await api.request(R(fullUrl: '${state.host}${api.url}', showDefaultLoading: false));
-      status = switch (response.toString()) { "pong" => DomainAccountStatus.ping, _ => DomainAccountStatus.error };
-      if (status == DomainAccountStatus.error) {
-        state = state.copyWith.error(response);
-      }
-      state = state.copyWith.status(status);
-    } catch (e) {
-      state = state.copyWith(error: e, status: DomainAccountStatus.error);
-    }
-  }
-
-  ///获取存储桶
-  Future<void> _fetchStoragesList() async {
-    var DomainAccount(:storageLoading, :storageError, :mainStorages) = state;
-    try {
-      if (storageLoading != true) {
-        state = state.copyWith.storageLoading(true);
-      }
-      if (storageError != null) {
-        state = state.copyWith.storageError(null);
-      }
-      state = state.copyWith.mainStorages(const FsListResult());
-      var result = await MyFsListApi().request(R(showDefaultLoading: false, data: const FsListParam(path: '/').toJson()));
-      if (result.content.isNotEmpty) {
-        result = result.copyWith(
-            content: result.content.updateAll((value) {
-          final n = value.copyWith(simplePathUrl: '/${value.name}');
-          return n.copyWith(dirs: IListConst([n.rootWidget]));
-        }).updateFirst((old) => old.copyWith(active: true)));
-      }
-      if(mounted){
-        state = state.copyWith(mainStorages: result, storageLoading: false);
-      }
-    } on GlobalError catch (e) {
-      state = state.copyWith(storageLoading: false, storageError: e);
-    }
-  }
-
-  ///登录
-  Future<void> login(String username, String password) async {
-    try {
-      final response =
-          await MyLoginApi(AuthLoginParam(username: username, password: password)).request(const R(showDefaultLoading: true, loadingText: '登录中'));
-      await AccountManager.instance.loginSuccess(response.token);
-      refreshStoragesList();
-      ToastUtil.showSuccess('欢迎回来,您已成功登录!');
-    } on GlobalError catch (e) {
-      ToastUtil.showWarning('登录失败:${e.getMessage()}');
-    }
-  }
-
-  ///更新
-  void changeRootFolder(bool Function(FsModel model) where, ValueCopyWith<FsModel> doUpdate) {
-    final domain = ref.activeDomain;
-    if (domain != null) {
-      Logger().t('更新:$domain');
-      ref.read(sitesStateProvider.notifier).change(
-          domain.isEq,
-          (value) =>
-              value.copyWith(mainStorages: value.mainStorages.copyWith(content: value.mainStorages.content.updateItemFirstWhere(where, doUpdate))));
-    }
-  }
-
-  ///上传文件
-  void uploadFile(String path, {ValueChanged<IListConst<TaskModel>>? onSelect}) {
-    // todo
-    // ref.read(uploadTaskProvider.notifier).uploadFile(path, onSelect: onSelect);
-  }
-
-  void uploadFolder(String path, {ValueChanged<IList<TaskModel>>? onSelect}) {
-    // todo
-    // ref
-    //     .read(uploadTaskProvider.notifier)
-    //     .uploadFolder(path, onSelect: onSelect);
-  }
-
-  ///修改布局
-  void changeLayout(FilesLayoutStyle newStyle) {
-    state = state.copyWith(layoutStyle: newStyle);
-  }
-
-  ///修改排序方式
-  void changeSortType(FilesSortType newType) {
-    state = state.copyWith(sortType: newType);
-  }
-
-  void refreshStoragesList() {
-    _fetchStoragesList();
-  }
-
-  @override
-  set state(DomainAccount value) {
-    if (mounted) {
-      super.state = value;
-    }
-  }
-}
-
 @CopyWith()
 @collection
 @JsonSerializable()
@@ -230,6 +98,11 @@ class DomainAccount extends ChangeNotifier {
   @igFreezedJson
   String? label;
 
+  ///是否为空
+  @igFreezedJson
+  @Ignore()
+  bool empty;
+
   DomainAccount(
       {this.domain = '',
       this.note = '',
@@ -249,7 +122,8 @@ class DomainAccount extends ChangeNotifier {
       this.id = Isar.autoIncrement,
       this.status = DomainAccountStatus.none,
       this.navigators = const IListConst([]),
-      this.uploadTaskPages = const IListConst([])}) {
+      this.uploadTaskPages = const IListConst([]),
+      this.empty = false}) {
     navigators = _defaultMainLayoutUI;
     uploadTaskPages = _uploadLayoutUI;
   }
@@ -433,6 +307,21 @@ class DomainAccount extends ChangeNotifier {
     changeNavigatorByUpload(uploadTaskPages[1]);
   }
 
+
+  ///登录
+  Future<bool> login(String username,String password) async {
+    try{
+     final response = await MyLoginApi(AuthLoginParam(username: username,password: password)).request(const RequestParams(loadingText: "正在登录"));
+     final token = response.token;
+     await AccountManager.instance.loginSuccess(token);
+     toast('登录成功');
+     return true;
+    }on BaseApiException catch(e){
+      toast(e.getMessage);
+    }
+    return false;
+  }
+
   void changeLayout(FilesLayoutStyle newStyle) {
     layoutStyle = newStyle;
     notifyListeners();
@@ -441,23 +330,6 @@ class DomainAccount extends ChangeNotifier {
   @override
   String toString() {
     return jsonEncode(toJson());
-  }
-
-  @igFreezedJson
-  bool _isDiaposed = false;
-
-  @override
-  void dispose() {
-    _isDiaposed = true;
-    super.dispose();
-  }
-
-  @override
-  void notifyListeners() {
-    if (_isDiaposed) {
-      return;
-    }
-    super.notifyListeners();
   }
 }
 

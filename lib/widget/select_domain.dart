@@ -51,7 +51,7 @@ class SelectDomainWidget extends BasePlatformWidget {
               SliverPadding(
                 padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
                 sliver: SliverWaterfallFlow.count(
-                  crossAxisCount: 6,
+                  crossAxisCount: 4,
                   mainAxisSpacing: 12,
                   crossAxisSpacing: 12,
                   children: [...data.map((e) => _ItemWrapper(item: e))],
@@ -108,10 +108,7 @@ class SelectDomainWidget extends BasePlatformWidget {
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             Text('没有站点可使用,请右上角菜单添加一个', style: context.textTheme.titleMedium),
-                            FilledButton.icon(
-                                onPressed: _showCreateDialog,
-                                label: const Text('添加'),
-                                icon: const Icon(Icons.add))
+                            FilledButton.icon(onPressed: _showCreateDialog, label: const Text('添加'), icon: const Icon(Icons.add))
                           ],
                         ),
                       ),
@@ -201,7 +198,7 @@ class SelectDomainWidget extends BasePlatformWidget {
         break;
       case AddSiteType.importFromUrl:
       case AddSiteType.importFromFile:
-      await _ImportButton.import();
+        await _ImportButton.import();
     }
   }
 
@@ -334,147 +331,155 @@ class _ItemLayout extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final isEditMode = ref.watch(domainEditModelStateProvider.select((value) => value.isEditorMode));
 
-    return KeyEventWidget(builder: (context, hasFocus) {
-      return FocusScope(
-        parentNode: context,
-        child: LayoutBuilder(builder: (context, size) {
-          return HoverCard(
-            shape: RoundedRectangleBorder(side: BorderSide(width: .1, color: context.colorScheme.outline), borderRadius: BorderRadius.circular(12)),
-            onTap: () => ref.switchApplication(item),
-            child: (isHover) => ConstrainedBox(
-              constraints: BoxConstraints(minWidth: size.maxWidth, minHeight: size.maxWidth),
-              child: Stack(
-                children: [
-                  SizedBox(
-                    height: size.maxWidth,
-                    width: size.maxWidth,
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
-                        const _DomainLogo(),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const SizedBox(
-                              height: 6,
+    return pp.ChangeNotifierProvider<DomainAccount>(
+      create: (BuildContext context) {
+        return item;
+      },
+      builder: (context, child) {
+        return KeyEventWidget(builder: (context, hasFocus) {
+          return FocusScope(
+            parentNode: context,
+            child: LayoutBuilder(builder: (context, size) {
+              return HoverCard(
+                shape:
+                    RoundedRectangleBorder(side: BorderSide(width: .1, color: context.colorScheme.outline), borderRadius: BorderRadius.circular(12)),
+                onTap: () => ref.switchApplication(item),
+                child: (isHover) => ConstrainedBox(
+                  constraints: BoxConstraints(minWidth: size.maxWidth, minHeight: size.maxWidth),
+                  child: Stack(
+                    children: [
+                      SizedBox(
+                        height: size.maxWidth,
+                        width: size.maxWidth,
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
+                            const _DomainLogo(),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const SizedBox(
+                                  height: 6,
+                                ),
+                                Text(
+                                  item.name,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: context.textTheme.titleLarge,
+                                ),
+                                Text(
+                                  item.note.isEmpty ? '-' : item.note,
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: context.textTheme.bodySmall?.copyWith(color: context.colorScheme.secondary),
+                                ),
+                              ],
                             ),
-                            Text(
-                              item.name,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: context.textTheme.titleLarge,
-                            ),
-                            Text(
-                              item.note.isEmpty ? '-' : item.note,
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                              style: context.textTheme.bodySmall?.copyWith(color: context.colorScheme.secondary),
-                            ),
-                          ],
+                            SpaceRow(
+                              space: 4,
+                              children: [
+                                const _Ping(),
+                                if (item.importTime != null)
+                                  MyIcon(
+                                    iconData: LineIcons.globe,
+                                    noBorder: true,
+                                    toolTip: '${item.label}',
+                                  )
+                              ],
+                            )
+                          ]),
                         ),
-                        SpaceRow(
-                          space: 4,
-                          children: [
-                            const _Ping(),
-                            if (item.importTime != null)
-                              MyIcon(
-                                iconData: LineIcons.globe,
-                                noBorder: true,
-                                toolTip: '${item.label}',
-                              )
-                          ],
-                        )
-                      ]),
-                    ),
-                  ),
-                  if (isEditMode)
-                    Positioned(
-                      top: 6,
-                      right: 6,
-                      child: RoundCheckBox(
-                        size: 12,
-                        checkedWidget: const Icon(LineIcons.check, color: Colors.white, size: 8),
-                        checkedColor: context.primaryColor,
-                        isChecked: ref.watch(domainEditModelStateProvider.select((value) => value.selectIdList.contains(item.id))),
-                        onTap: (value) {
-                          ref.read(domainEditModelStateProvider.notifier).changeState(item);
-                        },
                       ),
-                    ),
-                  if (isHover && !isEditMode)
-                    Positioned(
-                        top: 12,
-                        right: 6,
-                        child: HoverWidget(
-                          builder: (color, isHove, controller) {
-                            return Container(
-                                decoration: BoxDecoration(color: color, borderRadius: BorderRadius.circular(4)),
-                                child: const Icon(Icons.more_vert_outlined));
-                          },
-                          onTap: (ctx, pos) {
-                            showMenu<String>(context: context, position: pos, items: [
-                              MyPopupButton(
-                                text: '打开',
-                                leading: const Icon(Icons.open_in_new),
-                                onTap: () {
-                                  ref.switchApplication(item);
-                                },
-                              ),
-                              MyPopupButton(
-                                text: '编辑',
-                                leading: const Icon(LineIcons.editAlt),
-                                onTap: () {
-                                  showDialog(
-                                      context: context,
-                                      builder: (context) => CreateNewDomainWidget(
-                                            updateDomain: item,
-                                          )).then((value) {
-                                    if (value == true) {
-                                      ref.invalidate(sitesStateProvider);
-                                    }
-                                  });
-                                },
-                              ),
-                              MyPopupButton(
-                                text: '复制链接',
-                                leading: const Icon(LineIcons.copy),
-                                onTap: () {
-                                  item.domain.copy();
-                                  showDialog(
-                                    context: context,
-                                    builder: (context) {
-                                      return StringDialog(
-                                        title: '复制到剪贴板',
-                                        message: '成功:${item.domain}',
+                      if (isEditMode)
+                        Positioned(
+                          top: 6,
+                          right: 6,
+                          child: RoundCheckBox(
+                            size: 12,
+                            checkedWidget: const Icon(LineIcons.check, color: Colors.white, size: 8),
+                            checkedColor: context.primaryColor,
+                            isChecked: ref.watch(domainEditModelStateProvider.select((value) => value.selectIdList.contains(item.id))),
+                            onTap: (value) {
+                              ref.read(domainEditModelStateProvider.notifier).changeState(item);
+                            },
+                          ),
+                        ),
+                      if (isHover && !isEditMode)
+                        Positioned(
+                            top: 12,
+                            right: 6,
+                            child: HoverWidget(
+                              builder: (color, isHove, controller) {
+                                return Container(
+                                    decoration: BoxDecoration(color: color, borderRadius: BorderRadius.circular(4)),
+                                    child: const Icon(Icons.more_vert_outlined));
+                              },
+                              onTap: (ctx, pos) {
+                                showMenu<String>(context: context, position: pos, items: [
+                                  MyPopupButton(
+                                    text: '打开',
+                                    leading: const Icon(Icons.open_in_new),
+                                    onTap: () {
+                                      ref.switchApplication(item);
+                                    },
+                                  ),
+                                  MyPopupButton(
+                                    text: '编辑',
+                                    leading: const Icon(LineIcons.editAlt),
+                                    onTap: () {
+                                      showDialog(
+                                          context: context,
+                                          builder: (context) => CreateNewDomainWidget(
+                                                updateDomain: item,
+                                              )).then((value) {
+                                        if (value == true) {
+                                          ref.invalidate(sitesStateProvider);
+                                        }
+                                      });
+                                    },
+                                  ),
+                                  MyPopupButton(
+                                    text: '复制链接',
+                                    leading: const Icon(LineIcons.copy),
+                                    onTap: () {
+                                      item.domain.copy();
+                                      showDialog(
+                                        context: context,
+                                        builder: (context) {
+                                          return StringDialog(
+                                            title: '复制到剪贴板',
+                                            message: '成功:${item.domain}',
+                                          );
+                                        },
                                       );
                                     },
-                                  );
-                                },
-                              ),
-                              const PopupMenuDivider(),
-                              MyPopupButton(
-                                text: '删除',
-                                leading: Icon(
-                                  LineIcons.trash,
-                                  color: context.colorScheme.error,
-                                ),
-                                dangerous: true,
-                                onTap: () {
-                                  AccountManager.instance.delete(item).then((value) => ref.invalidate(sitesStateProvider));
-                                },
-                              ),
-                              if (item.error != null) const PopupMenuDivider(),
-                              if (item.error != null) MyPopupButton(text: '错误:${item.error}')
-                            ]);
-                          },
-                        ))
-                ],
-              ),
-            ),
+                                  ),
+                                  const PopupMenuDivider(),
+                                  MyPopupButton(
+                                    text: '删除',
+                                    leading: Icon(
+                                      LineIcons.trash,
+                                      color: context.colorScheme.error,
+                                    ),
+                                    dangerous: true,
+                                    onTap: () {
+                                      AccountManager.instance.delete(item).then((value) => ref.invalidate(sitesStateProvider));
+                                    },
+                                  ),
+                                  if (item.error != null) const PopupMenuDivider(),
+                                  if (item.error != null) MyPopupButton(text: '错误:${item.error}')
+                                ]);
+                              },
+                            ))
+                    ],
+                  ),
+                ),
+              );
+            }),
           );
-        }).animate().shake(),
-      );
-    });
+        });
+      },
+    );
   }
 }
 
@@ -631,8 +636,8 @@ class _ImportButton extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return TextButton.icon(
       onPressed: () async {
-       await import();
-       ref.invalidate(sitesStateProvider);
+        await import();
+        ref.invalidate(sitesStateProvider);
       },
       icon: const Icon(LineIcons.fileImport),
       label: const Text('导入'),
@@ -737,13 +742,15 @@ class _ImportForCloudState extends State<_ImportForCloud> {
       content: SpaceColumn(
         space: 20,
         children: [
-          CupertinoTextField(
+          TextField(
             onChanged: (value) {
               setState(() {
                 text = value;
               });
             },
-            placeholder: '输入远程json链接',
+            decoration: const InputDecoration(
+              hintText: "输入远程json链接"
+            ),
           ),
           FilledButton(onPressed: text.isNotEmpty && text.urlManager.isURL ? _submit : null, child: const Text('确定')).maxWidthButton
         ],

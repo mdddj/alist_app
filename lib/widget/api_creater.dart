@@ -70,7 +70,6 @@ class ApiCreaterState<T, A extends MyApiBase<T>>
       });
       final response = await api.request(
           widget.params?.call(this) ?? const R(showDefaultLoading: false));
-      debugPrint("response:$response");
       setState(() {
         _data = response;
         _loading = false;

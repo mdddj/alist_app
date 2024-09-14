@@ -10,7 +10,7 @@ class StringDialog extends StatelessWidget {
     return AlertDialog(
       title: Text(title ?? '提示'),
       content: Text(message),
-      actions: [FilledButton(onPressed: context.pop, child: const Text('关闭'))],
+      actions: [FilledButton(onPressed: GoRouter.of(context).pop, child: const Text('关闭'))],
     );
   }
 }

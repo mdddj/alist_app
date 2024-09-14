@@ -110,7 +110,6 @@ class _CreateNewDomainWidgetState extends ConsumerState<CreateNewDomainWidget> {
   }
 
   Future<void> _create() async {
-    Logger().d('create...');
     if (_account.valid.not) {
       toast('配置验证失败');
       return;

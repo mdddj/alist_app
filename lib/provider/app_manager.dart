@@ -18,7 +18,6 @@ extension ApplicationManagerExByRef on Ref {
   }
 }
 
-
 extension ActiveDomainByContextEx on BuildContext {
   DomainAccount? get activeDomain {
     return watch<DomainAccount>();
@@ -34,17 +33,20 @@ extension ApplicationManagerEx on WidgetRef {
   }
 
   ///当前选中的账号
-  DomainAccount? get activeDomain => watch(myActiveDomainProvider);
+  DomainAccount get activeDomain => watch(sitesStateProvider.select(
+        (value) => value.value?.firstWhereOrNull(
+          (element) => element.active,
+        ),
+      )) ?? DomainAccount(empty: true);
+
+  DomainAccount get activeDomainRead => read(sitesStateProvider.select(
+        (value) => value.value?.firstWhereOrNull(
+          (element) => element.active,
+    ),
+  )) ?? DomainAccount(empty: true);
 
 
-  DomainAccount? get activeDomainRead => read(myActiveDomainProvider);
-
-  ///当前选中的状态管理
-  DomainAccountState get activeDomainFun =>
-      read(myActiveDomainProvider.notifier);
-
-  IList<FsModel> get activeRootModels =>
-      activeDomain?.mainStorages.content ?? const IListConst([]);
+  IList<FsModel> get activeRootModels => activeDomain?.mainStorages.content ?? const IListConst([]);
 }
 
 extension ApplicationManagerEx2 on Ref {
@@ -55,14 +57,7 @@ extension ApplicationManagerEx2 on Ref {
   }
 
   ///当前选中的账号
-  DomainAccount? get activeDomain =>
-      watch(sitesStateProvider.select((value) => value.value))
-          ?.firstWhereOrNull((element) => element.active);
+  DomainAccount? get activeDomain => watch(sitesStateProvider.select((value) => value.value))?.firstWhereOrNull((element) => element.active);
 
-  ///当前选中的状态管理
-  DomainAccountState get activeDomainFun =>
-      read(myActiveDomainProvider.notifier);
-
-  IList<FsModel> get activeRootModels =>
-      activeDomain?.mainStorages.content ?? const IListConst([]);
+  IList<FsModel> get activeRootModels => activeDomain?.mainStorages.content ?? const IListConst([]);
 }

@@ -10,7 +10,7 @@ class FilesToolbar extends PlatformWidget {
       children: [
         HoverWidget(
           onTap: (_, ___) {
-            ref.activeDomainFun.refreshStoragesList();
+            domain.refreshStorage();
           },
           builder: (color, _, controller) {
             return Icon(
