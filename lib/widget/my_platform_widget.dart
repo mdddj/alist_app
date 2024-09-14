@@ -8,7 +8,9 @@ abstract class PlatformWidget extends ConsumerWidget {
   const PlatformWidget({super.key});
 
   Widget buildWithDesktop(
-      BuildContext context, WidgetRef ref, DomainAccount domain);
+      BuildContext context, WidgetRef ref, DomainAccount domain){
+    return const SizedBox.shrink();
+  }
 
   Widget buildWithMobile(
       BuildContext context, WidgetRef ref, DomainAccount domain) {
@@ -20,6 +22,7 @@ abstract class PlatformWidget extends ConsumerWidget {
     final active = ref.watch(myActiveDomainProvider);
     final desktopWidget = buildWithDesktop(context, ref, active);
     final mobileWidget = buildWithMobile(context, ref, active);
+    debugPrint("is desktop:${myPlatform.isDesktop}");
     return myPlatform.isDesktop ? desktopWidget : mobileWidget;
   }
 }
@@ -31,6 +34,7 @@ abstract class BasePlatformWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final desktopWidget = buildWithDesktop(context);
     final mobileWidget = buildWithMobile(context);
+    debugPrint("is desktop: ${myPlatform.isDesktop}");
     return myPlatform.isDesktop ? desktopWidget : mobileWidget;
   }
 

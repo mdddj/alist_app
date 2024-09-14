@@ -42,8 +42,7 @@ final _defaultMainLayoutUI = IListConst([
   PageModel.main(child: const MainPage()),
   // todo 收藏功能暂时隐藏
   // PageModel.favorite(child: const FavoriteIndexPage()),
-  PageModel.upload(
-      child: const UploadMainPage(), render: UploadBadgeBuilder.new),
+  PageModel.upload(child: const UploadMainPage(), render: UploadBadgeBuilder.new),
   PageModel.custom(
     title: '设置',
     icon: Icons.settings,
@@ -61,18 +60,8 @@ final _uploadLayoutUI = IListConst([
       id: 'upload_task',
       ending: (context, ref) => const UploadingCountBuilder(),
       child: const UploadTaskUploadingWidget()),
-  PageModel.custom(
-      title: '下载',
-      icon: Icons.download,
-      id: "download_task",
-      pageType: PageType.upload,
-      child: const UploadTaskDownloadWidget()),
-  PageModel.custom(
-      title: "历史纪录",
-      id: 'task_history',
-      icon: Icons.history,
-      pageType: PageType.upload,
-      child: const UploadTaskHistoryWidget())
+  PageModel.custom(title: '下载', icon: Icons.download, id: "download_task", pageType: PageType.upload, child: const UploadTaskDownloadWidget()),
+  PageModel.custom(title: "历史纪录", id: 'task_history', icon: Icons.history, pageType: PageType.upload, child: const UploadTaskHistoryWidget())
 ]);
 
 extension DomainAccountEx on DomainAccount {
@@ -84,16 +73,14 @@ extension DomainAccountEx on DomainAccount {
     return true;
   }
 
-  String get host =>
-      domain.endsWith('/') ? domain.substring(0, domain.length - 1) : domain;
+  String get host => domain.endsWith('/') ? domain.substring(0, domain.length - 1) : domain;
 
   bool isEq(DomainAccount? domainAccount) => id == domainAccount?.id;
 }
 
 enum DomainAccountStatus { none, ping, error }
 
-final myActiveDomainProvider =
-    StateNotifierProvider<DomainAccountState, DomainAccount>((ref) {
+final myActiveDomainProvider = StateNotifierProvider<DomainAccountState, DomainAccount>((ref) {
   final find = ref.activeDomain ?? DomainAccount();
   return DomainAccountState(find, ref);
 });
@@ -121,12 +108,8 @@ class DomainAccountState extends StateNotifier<DomainAccount> {
       var DomainAccount(:status) = state;
       state = state.copyWith.error(null);
       final api = MyPublicPingApi();
-      final response = await api.request(
-          R(fullUrl: '${state.host}${api.url}', showDefaultLoading: false));
-      status = switch (response.toString()) {
-        "pong" => DomainAccountStatus.ping,
-        _ => DomainAccountStatus.error
-      };
+      final response = await api.request(R(fullUrl: '${state.host}${api.url}', showDefaultLoading: false));
+      status = switch (response.toString()) { "pong" => DomainAccountStatus.ping, _ => DomainAccountStatus.error };
       if (status == DomainAccountStatus.error) {
         state = state.copyWith.error(response);
       }
@@ -147,9 +130,7 @@ class DomainAccountState extends StateNotifier<DomainAccount> {
         state = state.copyWith.storageError(null);
       }
       state = state.copyWith.mainStorages(const FsListResult());
-      var result = await MyFsListApi().request(R(
-          showDefaultLoading: false,
-          data: const FsListParam(path: '/').toJson()));
+      var result = await MyFsListApi().request(R(showDefaultLoading: false, data: const FsListParam(path: '/').toJson()));
       if (result.content.isNotEmpty) {
         result = result.copyWith(
             content: result.content.updateAll((value) {
@@ -157,20 +138,19 @@ class DomainAccountState extends StateNotifier<DomainAccount> {
           return n.copyWith(dirs: IListConst([n.rootWidget]));
         }).updateFirst((old) => old.copyWith(active: true)));
       }
-      state = state.copyWith(mainStorages: result, storageLoading: false);
+      if(mounted){
+        state = state.copyWith(mainStorages: result, storageLoading: false);
+      }
     } on GlobalError catch (e) {
       state = state.copyWith(storageLoading: false, storageError: e);
     }
   }
 
-
-
   ///登录
   Future<void> login(String username, String password) async {
     try {
-      final response = await MyLoginApi(
-              AuthLoginParam(username: username, password: password))
-          .request(const R(showDefaultLoading: true, loadingText: '登录中'));
+      final response =
+          await MyLoginApi(AuthLoginParam(username: username, password: password)).request(const R(showDefaultLoading: true, loadingText: '登录中'));
       await AccountManager.instance.loginSuccess(response.token);
       refreshStoragesList();
       ToastUtil.showSuccess('欢迎回来,您已成功登录!');
@@ -180,23 +160,19 @@ class DomainAccountState extends StateNotifier<DomainAccount> {
   }
 
   ///更新
-  void changeRootFolder(
-      bool Function(FsModel model) where, ValueCopyWith<FsModel> doUpdate) {
+  void changeRootFolder(bool Function(FsModel model) where, ValueCopyWith<FsModel> doUpdate) {
     final domain = ref.activeDomain;
     if (domain != null) {
       Logger().t('更新:$domain');
       ref.read(sitesStateProvider.notifier).change(
           domain.isEq,
-          (value) => value.copyWith(
-              mainStorages: value.mainStorages.copyWith(
-                  content: value.mainStorages.content
-                      .updateItemFirstWhere(where, doUpdate))));
+          (value) =>
+              value.copyWith(mainStorages: value.mainStorages.copyWith(content: value.mainStorages.content.updateItemFirstWhere(where, doUpdate))));
     }
   }
 
   ///上传文件
-  void uploadFile(String path,
-      {ValueChanged<IListConst<TaskModel>>? onSelect}) {
+  void uploadFile(String path, {ValueChanged<IListConst<TaskModel>>? onSelect}) {
     // todo
     // ref.read(uploadTaskProvider.notifier).uploadFile(path, onSelect: onSelect);
   }
@@ -224,7 +200,7 @@ class DomainAccountState extends StateNotifier<DomainAccount> {
 
   @override
   set state(DomainAccount value) {
-    if(mounted){
+    if (mounted) {
       super.state = value;
     }
   }
@@ -341,19 +317,16 @@ class DomainAccount extends ChangeNotifier {
   ///获取显示主页面
   @Ignore()
   @igFreezedJson
-  PageModel get activePage =>
-      navigators.find((element) => element.active) ?? navigators.first;
+  PageModel get activePage => navigators.find((element) => element.active) ?? navigators.first;
 
   ///获取显示的上传下载页面
   @Ignore()
   @igFreezedJson
-  PageModel get activePageByUpload =>
-      uploadTaskPages.firstWhere((element) => element.active);
+  PageModel get activePageByUpload => uploadTaskPages.firstWhere((element) => element.active);
 
   @Ignore()
   @igFreezedJson
   bool storageLoading = false;
-
 
   @igFreezedJson
   bool get isAdminer => authToken.isNotEmpty;
@@ -364,12 +337,8 @@ class DomainAccount extends ChangeNotifier {
       error = null;
       notifyListeners();
       final api = MyPublicPingApi();
-      final response = await api
-          .request(R(fullUrl: '$host${api.url}', showDefaultLoading: false));
-      status = switch (response.toString()) {
-        "pong" => DomainAccountStatus.ping,
-        _ => DomainAccountStatus.error
-      };
+      final response = await api.request(R(fullUrl: '$host${api.url}', showDefaultLoading: false));
+      status = switch (response.toString()) { "pong" => DomainAccountStatus.ping, _ => DomainAccountStatus.error };
       if (status == DomainAccountStatus.error) {
         error = response;
       }
@@ -385,9 +354,7 @@ class DomainAccount extends ChangeNotifier {
   Future<void> _getSetting() async {
     try {
       final api = MyPublicGetSettingApi();
-      final response = await api.request(R(
-          urlParseFormat: (uri, queryParameters) => '$host${api.url}',
-          showDefaultLoading: false));
+      final response = await api.request(R(urlParseFormat: (uri, queryParameters) => '$host${api.url}', showDefaultLoading: false));
       setting = response;
       notifyListeners();
     } catch (_) {}
@@ -409,9 +376,7 @@ class DomainAccount extends ChangeNotifier {
       notifyListeners();
 
       mainStorages = const FsListResult();
-      var result = await MyFsListApi().request(R(
-          showDefaultLoading: false,
-          data: const FsListParam(path: '/').toJson()));
+      var result = await MyFsListApi().request(R(showDefaultLoading: false, data: const FsListParam(path: '/').toJson()));
       if (result.content.isNotEmpty) {
         result = result.copyWith(
             content: result.content.updateAll((value) {
@@ -433,9 +398,7 @@ class DomainAccount extends ChangeNotifier {
 
   ///更换存储桶
   void changeMainStore(FsModel model, bool Function(FsModel ele) find) {
-    mainStorages = mainStorages.copyWith(
-        content:
-            mainStorages.content.updateItemFirstWhere(find, (old) => model));
+    mainStorages = mainStorages.copyWith(content: mainStorages.content.updateItemFirstWhere(find, (old) => model));
     notifyListeners();
   }
 
@@ -444,8 +407,7 @@ class DomainAccount extends ChangeNotifier {
     mainStorages = mainStorages.copyWith(
         content: mainStorages.content
             .updateAll((value) => value.copyWith(active: false))
-            .updateItemFirstWhere(
-                model.eq, (old) => old.copyWith(active: true)));
+            .updateItemFirstWhere(model.eq, (old) => old.copyWith(active: true)));
     notifyListeners();
   }
 
@@ -453,8 +415,7 @@ class DomainAccount extends ChangeNotifier {
   void changeNavigator(PageModel pageModel) {
     navigators = navigators
         .updateAll((value) => value.copyWith(active: false))
-        .updateItemFirstWhere((element) => element.isEq(pageModel),
-            (old) => old.copyWith(active: true));
+        .updateItemFirstWhere((element) => element.isEq(pageModel), (old) => old.copyWith(active: true));
     notifyListeners();
   }
 
@@ -462,15 +423,13 @@ class DomainAccount extends ChangeNotifier {
   void changeNavigatorByUpload(PageModel pageModel) {
     uploadTaskPages = uploadTaskPages
         .updateAll((value) => value.copyWith(active: false))
-        .updateItemFirstWhere((element) => element.isEq(pageModel),
-            (old) => old.copyWith(active: true));
+        .updateItemFirstWhere((element) => element.isEq(pageModel), (old) => old.copyWith(active: true));
     notifyListeners();
   }
 
   ///显示下载页面
   void showDownloadPage() {
-    changeNavigator(
-        navigators.firstWhere((element) => element.getId == 'upload'));
+    changeNavigator(navigators.firstWhere((element) => element.getId == 'upload'));
     changeNavigatorByUpload(uploadTaskPages[1]);
   }
 
@@ -484,10 +443,8 @@ class DomainAccount extends ChangeNotifier {
     return jsonEncode(toJson());
   }
 
-
   @igFreezedJson
   bool _isDiaposed = false;
-
 
   @override
   void dispose() {
@@ -497,7 +454,7 @@ class DomainAccount extends ChangeNotifier {
 
   @override
   void notifyListeners() {
-    if(_isDiaposed){
+    if (_isDiaposed) {
       return;
     }
     super.notifyListeners();
@@ -505,11 +462,9 @@ class DomainAccount extends ChangeNotifier {
 }
 
 ///导入
-IList<DomainAccount> importFromDynamicList(List<dynamic> list,
-    {String? label}) {
+IList<DomainAccount> importFromDynamicList(List<dynamic> list, {String? label}) {
   final result = List<DomainAccount>.from(list.map(DomainAccount.fromJson))
       .toIList()
-      .updateAll((value) =>
-          value.copyWith(importTime: DateTime.now(), label: label ?? '从文件导入'));
+      .updateAll((value) => value.copyWith(importTime: DateTime.now(), label: label ?? '从文件导入'));
   return result;
 }

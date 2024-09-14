@@ -70,6 +70,7 @@ class _Index extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final active = ref.activeDomain;
+    debugPrint("_Index:$active");
     return active == null ? const SelectDomainWidget() : const MobileHome();
   }
 }
@@ -96,6 +97,7 @@ class SupportRootWrapper extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    debugPrint("child:$child");
     return HookConsumer(builder: (context, ref, _) {
       final domain = ref.activeDomain!;
       final domains = ref.watch(sitesStateProvider);

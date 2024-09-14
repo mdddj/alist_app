@@ -9,6 +9,7 @@ class ApplicationWidget extends PlatformWidget {
   /// 桌面端使用横向布局
   @override
   Widget buildWithDesktop(BuildContext context, _, DomainAccount domain) {
+    debugPrint(">>>domain desktop:$domain");
     return const Scaffold(
       body: Row(
         children: [NavBar(), ApplicationMainWidget()],
@@ -21,6 +22,7 @@ class ApplicationWidget extends PlatformWidget {
   Widget buildWithMobile(BuildContext context, WidgetRef ref, DomainAccount domain) {
     final storages = domain.mainStorages.content;
     final layout = domain.layoutStyle;
+    debugPrint(">>> mobile.");
     return Scaffold(
       drawer: const MobileLeftDrawerWidget(),
       body: RefreshIndicator(
