@@ -74,60 +74,57 @@ class HoverWidgetState extends ConsumerState<HoverWidget> {
         }
       });
     }, builder: (node, hasFocus) {
-      return TVContainerWrapper(
-        hasFocus: hasFocus,
-        child: GestureDetector(
-          behavior: HitTestBehavior.opaque,
-          onTapDown: (details) {
-            setState(() {
-              offset = details.globalPosition;
-            });
-          },
-          onTap: () {
-            changeHoverColor(null);
-            if (offset case final Offset offset) {
-              final pos =
-                  RelativeRect.fromLTRB(offset.dx, offset.dy, offset.dx, 0);
-              widget.onTap?.call(context, pos);
+      return GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTapDown: (details) {
+          setState(() {
+            offset = details.globalPosition;
+          });
+        },
+        onTap: () {
+          changeHoverColor(null);
+          if (offset case final Offset offset) {
+            final pos =
+            RelativeRect.fromLTRB(offset.dx, offset.dy, offset.dx, 0);
+            widget.onTap?.call(context, pos);
+          }
+        },
+        onSecondaryTap: widget.onSecondaryTap,
+        onSecondaryTapDown: (details) {
+          ref.menuController.changeState((value) =>
+              value.copyWith(buttonOffset: details.globalPosition));
+          widget.onSecondaryTapDown
+              ?.call(details, HoverWidgetAction(this, changeHoverColor));
+        },
+        onSecondaryTapUp: (details) {
+          changeHoverColor(context.colorScheme.onSurfaceVariant);
+        },
+        onHorizontalDragUpdate: widget.onHorizontalDragUpdate,
+        child: MouseRegion(
+          cursor: widget.cursor ?? SystemMouseCursors.click,
+          onEnter: (event) {
+            if (!widget.isActivated) {
+              changeHoverColor(
+                  widget.hoverColor ?? context.colorScheme.surfaceContainerHighest);
             }
+            if (_isHove != true) {
+              setState(() {
+                _isHove = true;
+              });
+            }
+            _animatedWidgetController.start();
           },
-          onSecondaryTap: widget.onSecondaryTap,
-          onSecondaryTapDown: (details) {
-            ref.menuController.changeState((value) =>
-                value.copyWith(buttonOffset: details.globalPosition));
-            widget.onSecondaryTapDown
-                ?.call(details, HoverWidgetAction(this, changeHoverColor));
+          onExit: (event) {
+            changeHoverColor(null);
+            if (_isHove != false) {
+              setState(() {
+                _isHove = false;
+              });
+            }
+            _animatedWidgetController.stop();
           },
-          onSecondaryTapUp: (details) {
-            changeHoverColor(context.colorScheme.onSurfaceVariant);
-          },
-          onHorizontalDragUpdate: widget.onHorizontalDragUpdate,
-          child: MouseRegion(
-            cursor: widget.cursor ?? SystemMouseCursors.click,
-            onEnter: (event) {
-              if (!widget.isActivated) {
-                changeHoverColor(
-                    widget.hoverColor ?? context.colorScheme.surfaceContainerHighest);
-              }
-              if (_isHove != true) {
-                setState(() {
-                  _isHove = true;
-                });
-              }
-              _animatedWidgetController.start();
-            },
-            onExit: (event) {
-              changeHoverColor(null);
-              if (_isHove != false) {
-                setState(() {
-                  _isHove = false;
-                });
-              }
-              _animatedWidgetController.stop();
-            },
-            child: widget.builder.call(
-                (_hoverColor ?? _color), _isHove, _animatedWidgetController),
-          ),
+          child: widget.builder.call(
+              (_hoverColor ?? _color), _isHove, _animatedWidgetController),
         ),
       );
     });

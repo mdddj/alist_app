@@ -86,19 +86,3 @@ class _TVAppState extends State<TVApp> {
   }
 }
 
-class TVContainerWrapper extends StatelessWidget {
-  final Widget child;
-  final bool hasFocus;
-
-  const TVContainerWrapper({super.key, required this.child, required this.hasFocus});
-
-  @override
-  Widget build(BuildContext context) {
-    return AnimatedContainer(
-      margin: hasFocus ? const EdgeInsets.symmetric(horizontal: 12) : EdgeInsets.zero,
-      duration: const Duration(milliseconds: 50),
-      decoration: BoxDecoration(borderRadius: BorderRadius.circular(12), border: Border.all(width: 2, color: hasFocus ? context.colorScheme.tertiary : Colors.transparent)),
-      child: hasFocus ? child.animate().shakeY() : child,
-    );
-  }
-}

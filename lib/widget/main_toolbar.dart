@@ -33,7 +33,6 @@ class MainToolBar extends ConsumerWidget {
                         color: color,
                         child: const Icon(
                           Icons.menu,
-                          color: Colors.white,
                         ),
                       );
                     },
@@ -57,7 +56,6 @@ class MainToolBar extends ConsumerWidget {
                       color: color,
                       child: const Icon(
                         CupertinoIcons.arrow_left,
-                        color: Colors.white,
                       ),
                     );
                   },
@@ -72,7 +70,6 @@ class MainToolBar extends ConsumerWidget {
                       color: color,
                       child: const Icon(
                         CupertinoIcons.arrow_right,
-                        color: Colors.white,
                       ),
                     );
                   },
@@ -87,7 +84,6 @@ class MainToolBar extends ConsumerWidget {
                       color: color,
                       child: const Icon(
                         Icons.history,
-                        color: Colors.white,
                       ),
                     );
                   },
@@ -106,7 +102,7 @@ class MainToolBar extends ConsumerWidget {
                 children: [
                   Container(
                       decoration: BoxDecoration(
-                          color: context.cardColor,
+                          color: context.colorScheme.surfaceContainer,
                           borderRadius: BorderRadius.circular(12)),
                       width: constraints.maxWidth * 0.7,
                       child: TextField(
@@ -133,7 +129,6 @@ class MainToolBar extends ConsumerWidget {
                           color: color,
                           child: const Icon(
                             Icons.help,
-                            color: Colors.white,
                           ));
                     },
                     toolTip: '帮助',

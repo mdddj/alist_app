@@ -15,7 +15,7 @@ class FsListRender extends PlatformWidget {
         if (!hideSortToolBar) const HomeMobileToolbar().toSliverWidget,
         if (error != null) SliverFillRemaining(child: Center(child: Text(error.toString()))),
         SliverPadding(
-          padding: const EdgeInsets.symmetric(horizontal: 12),
+          padding: const EdgeInsets.symmetric(horizontal: 12,vertical: 12),
           sliver: SliverList.list(children: [
             ...fsModelList.map((element) => FsItemLayout(
                   fsModel: element,

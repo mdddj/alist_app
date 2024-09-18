@@ -129,45 +129,42 @@ class SelectDomainWidget extends BasePlatformWidget {
                           },
                         );
                       }, builder: (focusNode, hasFocus) {
-                        return TVContainerWrapper(
-                          hasFocus: hasFocus,
-                          child: Slidable(
-                            closeOnScroll: true,
-                            key: ValueKey(e.id),
-                            endActionPane: ActionPane(
-                              extentRatio: 0.3,
-                              motion: const ScrollMotion(),
-                              children: [
-                                SlidableAction(
-                                  onPressed: (context) {
-                                    showDialog(
-                                        context: context,
-                                        builder: (context) => CreateNewDomainWidget(
-                                              updateDomain: e,
-                                            )).then((value) {
-                                      if (value == true) {
-                                        ref.invalidate(sitesStateProvider);
-                                      }
-                                    });
-                                  },
-                                  backgroundColor: context.primaryColor,
-                                  foregroundColor: context.colorScheme.inversePrimary,
-                                  icon: LineIcons.edit,
-                                  flex: 1,
-                                ),
-                                SlidableAction(
-                                  flex: 1,
-                                  onPressed: (context) {
-                                    AccountManager.instance.delete(e).then((value) => ref.invalidate(sitesStateProvider));
-                                  },
-                                  backgroundColor: context.colorScheme.error,
-                                  foregroundColor: Colors.white,
-                                  icon: LineIcons.trash,
-                                ),
-                              ],
-                            ),
-                            child: _DomainAccountWif(item: e),
+                        return Slidable(
+                          closeOnScroll: true,
+                          key: ValueKey(e.id),
+                          endActionPane: ActionPane(
+                            extentRatio: 0.3,
+                            motion: const ScrollMotion(),
+                            children: [
+                              SlidableAction(
+                                onPressed: (context) {
+                                  showDialog(
+                                      context: context,
+                                      builder: (context) => CreateNewDomainWidget(
+                                        updateDomain: e,
+                                      )).then((value) {
+                                    if (value == true) {
+                                      ref.invalidate(sitesStateProvider);
+                                    }
+                                  });
+                                },
+                                backgroundColor: context.primaryColor,
+                                foregroundColor: context.colorScheme.inversePrimary,
+                                icon: LineIcons.edit,
+                                flex: 1,
+                              ),
+                              SlidableAction(
+                                flex: 1,
+                                onPressed: (context) {
+                                  AccountManager.instance.delete(e).then((value) => ref.invalidate(sitesStateProvider));
+                                },
+                                backgroundColor: context.colorScheme.error,
+                                foregroundColor: Colors.white,
+                                icon: LineIcons.trash,
+                              ),
+                            ],
                           ),
+                          child: _DomainAccountWif(item: e),
                         );
                       });
                     },

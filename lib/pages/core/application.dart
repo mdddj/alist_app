@@ -132,8 +132,7 @@ class _MobileIndexStateWidget extends ConsumerWidget {
               switch (storageError) {
                 TokenExpireError() || NoPermissionError() => KeyEventWidget(
                     builder: (focusNode, hasFocus) {
-                      return TVContainerWrapper(
-                          hasFocus: hasFocus, child: const FilledButton(onPressed: showLoginDialog, child: Text('登录')));
+                      return  const FilledButton(onPressed: showLoginDialog, child: Text('登录'));
                     },
                   ),
                 _ => OutlinedButton(onPressed: () {}, child: const Text('刷新'))

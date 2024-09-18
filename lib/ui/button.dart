@@ -58,7 +58,7 @@ class MyButton extends BasePlatformWidget {
                         style: context.textTheme.bodyMedium?.copyWith(
                             color: (!isActivated && dangerous == true)
                                 ? context.colorScheme.error
-                                : (isActivated ? Colors.white : null)),
+                                : (isActivated ? Colors.black : null)),
                       ).marginOnly(left: leading != null ? 6 : 0),
                     ),
                   if (end != null) end!
@@ -82,15 +82,12 @@ class MyButton extends BasePlatformWidget {
     return KeyEventWidget(
         onEvent: (v) => v.whenOrNull(ok: () => onTap?.call()),
         builder: (f, hasFocus) {
-          return TVContainerWrapper(
-            hasFocus: hasFocus,
-            child: CupertinoListTile(
-              leading: leading,
-              title: Text(text, maxLines: 2, overflow: TextOverflow.ellipsis,style: context.textTheme.titleMedium),
-              trailing: end,
-              onTap: onTap,
-              subtitle: subTitle,
-            ),
+          return CupertinoListTile(
+            leading: leading,
+            title: Text(text, maxLines: 2, overflow: TextOverflow.ellipsis,style: context.textTheme.titleMedium),
+            trailing: end,
+            onTap: onTap,
+            subtitle: subTitle,
           );
         });
   }

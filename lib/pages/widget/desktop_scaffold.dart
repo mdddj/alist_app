@@ -23,6 +23,7 @@ class DesktopScaffold extends ConsumerWidget {
           const MainToolBar(),
           Expanded(
             child: Card(
+              elevation: 30,
               margin: const EdgeInsets.only(top: 8, bottom: 8, right: 8),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
