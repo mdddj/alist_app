@@ -10,8 +10,7 @@ class MobileHomePage extends ConsumerStatefulWidget {
   ConsumerState<MobileHomePage> createState() => _MobileHomePageState();
 }
 
-class _MobileHomePageState extends ConsumerState<MobileHomePage>
-{
+class _MobileHomePageState extends ConsumerState<MobileHomePage> {
   @override
   void initState() {
     super.initState();
@@ -27,12 +26,13 @@ class _MobileHomePageState extends ConsumerState<MobileHomePage>
   @override
   Widget build(BuildContext context) {
     final domain = ref.activeDomain;
-    return Scaffold(
-      body: widget.child,
-      bottomNavigationBar: _Nav(nav: widget.child),
-    );
+    return pp.ChangeNotifierProvider(
+        create: (context) => domain,
+        child: Scaffold(
+          body: widget.child,
+          bottomNavigationBar: _Nav(nav: widget.child),
+        ));
   }
-
 }
 
 class _Nav extends StatelessWidget {
