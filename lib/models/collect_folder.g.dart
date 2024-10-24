@@ -188,7 +188,7 @@ const CollectFolderSchema = CollectionSchema(
   getId: _collectFolderGetId,
   getLinks: _collectFolderGetLinks,
   attach: _collectFolderAttach,
-  version: '3.1.0+1',
+  version: '3.1.8',
 );
 
 int _collectFolderEstimateSize(

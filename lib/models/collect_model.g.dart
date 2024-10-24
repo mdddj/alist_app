@@ -184,7 +184,7 @@ const CollectModelSchema = CollectionSchema(
   getId: _collectModelGetId,
   getLinks: _collectModelGetLinks,
   attach: _collectModelAttach,
-  version: '3.1.0+1',
+  version: '3.1.8',
 );
 
 int _collectModelEstimateSize(

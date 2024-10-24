@@ -1,4 +1,4 @@
-library widget;
+library;
 
 import 'dart:io';
 

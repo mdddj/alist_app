@@ -52,7 +52,7 @@ class ActiveApplicationProviderBuilder extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return builder.call(ref.activeDomain!);
+    return builder.call(ref.activeDomain);
   }
 }
 
@@ -64,7 +64,7 @@ class ProviderDialogWrapper extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return pp.ChangeNotifierProvider(
-      create: (context) => ref.activeDomain?..startGetState(),
+      create: (context) => ref.activeDomain..startGetState(),
       child: child,
     );
   }

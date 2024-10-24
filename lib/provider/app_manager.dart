@@ -46,7 +46,7 @@ extension ApplicationManagerEx on WidgetRef {
   )) ?? DomainAccount(empty: true);
 
 
-  IList<FsModel> get activeRootModels => activeDomain?.mainStorages.content ?? const IListConst([]);
+  IList<FsModel> get activeRootModels => activeDomain.mainStorages.content;
 }
 
 extension ApplicationManagerEx2 on Ref {

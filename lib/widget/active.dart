@@ -32,7 +32,7 @@ class ActiveDomain extends ConsumerWidget {
                       const PopupMenuDivider(),
                       ...data.map((e) => MyPopupButton(
                             text: e.name,
-                            isActive: e.id == domain?.id,
+                            isActive: e.id == domain.id,
                             onTap: () {
                               ref.switchApplication(e);
                             },
@@ -52,7 +52,7 @@ class ActiveDomain extends ConsumerWidget {
                     children: [
                       ConstrainedBox(
                         constraints: const BoxConstraints(maxWidth: 80),
-                        child: Text(domain?.name ?? '-',
+                        child: Text(domain.name,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: context.textTheme.titleMedium

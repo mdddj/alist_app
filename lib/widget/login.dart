@@ -48,7 +48,9 @@ class _LoginDialogState extends ConsumerState<LoginDialog> {
         ),
       ),
       actions: [
-        TextButton(onPressed: () => SmartDialog.dismiss(tag: LoginDialog.tag), child: const Text('取消')),
+        TextButton(
+            onPressed: () => SmartDialog.dismiss(tag: LoginDialog.tag),
+            child: const Text('取消')),
         const SizedBox(
           width: 6,
         ),
@@ -63,7 +65,7 @@ class _LoginDialogState extends ConsumerState<LoginDialog> {
     final password = passwordCtrl.text;
     final result = await account.login(username, password);
     if (result) {
-      SmartDialog.dismiss(tag: LoginDialog.tag);
+      SmartDialog.dismiss(tag: LoginDialog.tag, status: SmartStatus.custom);
     }
   }
 }

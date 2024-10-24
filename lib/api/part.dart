@@ -86,7 +86,7 @@ abstract class MyApiBase<T> extends BaseApi<T> {
       return result;
     } on BaseApiException catch (e) {
       IsarTool.instance.addLog(e.getMessage, false);
-      final ex = e.whenOrNull(cancel: () {
+      final ex = e.whenOrNull(cancel: (_,__) {
         return GlobalError.cancel();
       }, badResponse: (response, statusCode) {
         if (statusCode == 403) {

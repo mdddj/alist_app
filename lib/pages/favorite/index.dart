@@ -258,7 +258,7 @@ class _AddNewCollectFolderWidgetState
     final nav = context.nav;
     final name = _nameCtrl.text;
     final find = await IsarTool.instance.collectFolderDao
-        .find(ref.activeDomain!.id, name);
+        .find(ref.activeDomain.id, name);
     if (find != null) {
       ToastUtil.showWarning('文件夹已存在');
       return;
@@ -266,7 +266,7 @@ class _AddNewCollectFolderWidgetState
     final create = await IsarTool.instance.collectFolderDao.newFolder(
         CollectFolder(
             folderName: name,
-            siteId: ref.activeDomain!.id,
+            siteId: ref.activeDomain.id,
             isDefault: false,
             notes: _noteCtrl.text));
     ToastUtil.showSuccess('创建[$name]成功.');

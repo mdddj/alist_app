@@ -79,16 +79,12 @@ class MyButton extends BasePlatformWidget {
 
   @override
   Widget buildWithMobile(BuildContext context) {
-    return KeyEventWidget(
-        onEvent: (v) => v.whenOrNull(ok: () => onTap?.call()),
-        builder: (f, hasFocus) {
-          return CupertinoListTile(
-            leading: leading,
-            title: Text(text, maxLines: 2, overflow: TextOverflow.ellipsis,style: context.textTheme.titleMedium),
-            trailing: end,
-            onTap: onTap,
-            subtitle: subTitle,
-          );
-        });
+    return ListTile(
+      leading: leading,
+      title: Text(text),
+      trailing: end,
+      onTap: onTap,
+      subtitle: subTitle,
+    );
   }
 }

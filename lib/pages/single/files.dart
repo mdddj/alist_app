@@ -16,7 +16,7 @@ class _FilesSinglePageState extends ConsumerState<FilesSinglePage> with Automati
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    final provider = ref.activeDomain!;
+    final provider = ref.activeDomain;
     return Scaffold(
       appBar: AppBar(
         scrolledUnderElevation: 5,

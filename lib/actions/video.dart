@@ -58,7 +58,7 @@ class _VideoActionWidgetState extends ConsumerState<VideoActionWidget> {
                 const SizedBox(
                   height: 12,
                 ),
-                Text('提示:如果无法访问资源,请资源站点管理员处理,站点:${ref.activeDomain?.domain}',
+                Text('提示:如果无法访问资源,请资源站点管理员处理,站点:${ref.activeDomain.domain}',
                     style: context.textTheme.labelSmall),
                 const SizedBox(height: 12),
                 OutlinedButton(

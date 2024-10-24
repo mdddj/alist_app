@@ -104,7 +104,7 @@ class FsActionManager with ChangeNotifier {
     final folderId = ref.collectFolders
         .firstWhere((element) => element.isSelectByAddDialog)
         .id!;
-    final siteId = ref.activeDomain!.id;
+    final siteId = ref.activeDomain.id;
     final model = CollectModel(
         name: name,
         isFolder: isDir,
@@ -134,7 +134,7 @@ class FsActionManager with ChangeNotifier {
     // final p = ref.activeProvider?.getFullPath(model);
     final p = null;
     IsarTool.instance.collectDao
-        .isCollect(ref.activeDomain?.id ?? 0,
+        .isCollect(ref.activeDomain.id,
             p ?? '', model.isDir)
         .then((value) {
       collectModel = value;
@@ -144,9 +144,10 @@ class FsActionManager with ChangeNotifier {
 
   ///显示菜单
   Future<void> showMenuByMobile(BuildContext context, String path) async {
+    final ctx = context;
     getFsModel(path).then((model) {
-      if (model.rawUrl.isNotEmpty) {
-        context.push(MyPreviewFilePage().location,extra: PreviewParam(fsModel: fsModel,fileRawUrl: model.rawUrl));
+      if (model.rawUrl.isNotEmpty && ctx.mounted) {
+        ctx.push(MyPreviewFilePage().location,extra: PreviewParam(fsModel: fsModel,fileRawUrl: model.rawUrl));
       }
     });
   }

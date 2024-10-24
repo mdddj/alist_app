@@ -112,7 +112,7 @@ class MainToolBar extends ConsumerWidget {
                             border: _searchInputBorder,
                             enabledBorder: _searchInputBorder,
                             focusedBorder: _searchInputBorder,
-                            hintText: '${ref.activeDomain?.name}:搜索文件/文件夹',
+                            hintText: '${ref.activeDomain.name}:搜索文件/文件夹',
                             hoverColor: Colors.transparent,
                             filled: true,
                             fillColor: Colors.transparent,

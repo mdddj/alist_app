@@ -13,7 +13,7 @@ extension BaseApiExceptionEx on BaseApiException {
           connectionError: () => "连接失败 (Connection Error)",
           sendTimeout: () => "服务超时",
           businessException: (message, error, stackTrace) => message,
-          cancel: () => "请求关闭",
+          cancel: (_,__) => "请求关闭",
           badResponse: (response, statusCode) => "服务繁忙:$statusCode",
         ) ??
         "服务异常";

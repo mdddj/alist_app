@@ -1,4 +1,4 @@
-library ui;
+library;
 
 import 'dart:io';
 

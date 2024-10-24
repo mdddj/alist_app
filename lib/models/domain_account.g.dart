@@ -361,7 +361,7 @@ const DomainAccountSchema = CollectionSchema(
   getId: _domainAccountGetId,
   getLinks: _domainAccountGetLinks,
   attach: _domainAccountAttach,
-  version: '3.1.0+1',
+  version: '3.1.8',
 );
 
 int _domainAccountEstimateSize(

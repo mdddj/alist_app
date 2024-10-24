@@ -19,7 +19,7 @@ import 'app_manager.dart';
 part 'upload_task.g.dart';
 
 @riverpod
-List<int> tableFlexList(TableFlexListRef ref) {
+List<int> tableFlexList(Ref ref) {
   return [8, 3, 4, 4];
 }
 

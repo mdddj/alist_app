@@ -39,7 +39,7 @@ const PathHistorySchema = CollectionSchema(
   getId: _pathHistoryGetId,
   getLinks: _pathHistoryGetLinks,
   attach: _pathHistoryAttach,
-  version: '3.1.0+1',
+  version: '3.1.8',
 );
 
 int _pathHistoryEstimateSize(

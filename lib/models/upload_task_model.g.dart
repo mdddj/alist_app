@@ -333,7 +333,7 @@ const TaskModelSchema = CollectionSchema(
   getId: _taskModelGetId,
   getLinks: _taskModelGetLinks,
   attach: _taskModelAttach,
-  version: '3.1.0+1',
+  version: '3.1.8',
 );
 
 int _taskModelEstimateSize(

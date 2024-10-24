@@ -1,4 +1,4 @@
-library provider;
+library;
 
 import 'package:dd_js_util/dd_js_util.dart';
 import 'package:fast_immutable_collections/fast_immutable_collections.dart';

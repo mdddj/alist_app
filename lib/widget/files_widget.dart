@@ -50,7 +50,7 @@ class _FilesWidgetState extends ConsumerState<FilesWidget>
   }
 
   Widget get child {
-    final layout = ref.activeDomain?.layoutStyle ?? FilesLayoutStyle.list;
+    final layout = ref.activeDomain.layoutStyle;
     return LoadingMoreSliverList(SliverListConfig<FsModel>(
         itemBuilder: _itemBuilder,
         sourceList: repository,
@@ -66,7 +66,7 @@ class _FilesWidgetState extends ConsumerState<FilesWidget>
       {
       double childAspectRatio = 1.6,
       double gap = 12}) {
-    final layout = ref.activeDomain?.layoutStyle ?? FilesLayoutStyle.list;
+    final layout = ref.activeDomain.layoutStyle;
     return SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount:  switch(layout){
           FilesLayoutStyle.list =>1,
@@ -78,7 +78,7 @@ class _FilesWidgetState extends ConsumerState<FilesWidget>
   }
 
   Widget _itemBuilder(BuildContext context, FsModel item, int index) {
-    final layout = ref.activeDomain?.layoutStyle ?? FilesLayoutStyle.list;
+    final layout = ref.activeDomain.layoutStyle;
     final widget = switch (layout) {
       FilesLayoutStyle.list => FilesItemLayout(
           fsModel: item, onTap: (value) => item.onFileTap.call(ref, context)),

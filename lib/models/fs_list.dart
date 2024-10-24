@@ -66,7 +66,6 @@ class FsListResult with _$FsListResult {
 }
 
 extension FsModelEx on FsModel {
-
   //格式化大小
   String get sizeFormat {
     return ByteModel.create(size.toDouble()).format();
@@ -74,9 +73,8 @@ extension FsModelEx on FsModel {
 
   //获取详情
   Future<FsDetailInfo> requestInfo() async {
-    return await MyFsDetailGetApi().request(RequestParams(loadingText: '获取链接',data: {
-      "path": simplePathUrl
-    }));
+    return await MyFsDetailGetApi().request(
+        RequestParams(loadingText: '获取链接', data: {"path": simplePathUrl}));
   }
 
   ///删除文件
@@ -102,7 +100,7 @@ extension FsModelEx on FsModel {
           showDefaultLoading: true,
           loadingText: '正在拷贝文件到$copyToDirectoryPath'));
       final isSuccess = response.isSuccess;
-      if(isSuccess){
+      if (isSuccess) {
         toast('复制成功');
       }
       return isSuccess;
@@ -113,18 +111,15 @@ extension FsModelEx on FsModel {
   }
 
   //移动文件
-  Future<bool> move(
-      String copyToDirectoryPath) async {
+  Future<bool> move(String copyToDirectoryPath) async {
     final api = MyFsMoveFileApi(MyFsMoveFileApiParam(
-        srcDir: simplePathFolder,
-        dstDir: copyToDirectoryPath,
-        names: [name]));
+        srcDir: simplePathFolder, dstDir: copyToDirectoryPath, names: [name]));
     try {
       final response = await api.request(R(
           showDefaultLoading: true,
           loadingText: '正在移动文件到$copyToDirectoryPath'));
       final isSuccess = response.isSuccess;
-      if(isSuccess){
+      if (isSuccess) {
         toast('移动成功');
       }
       return isSuccess;
@@ -137,11 +132,12 @@ extension FsModelEx on FsModel {
   ///重命名
   Future<bool> rename(String newName) async {
     try {
-     await MyFsRenameFolderApi().request(R(
+      await MyFsRenameFolderApi().request(R(
           showDefaultLoading: true,
           loadingText: '重命名.',
           data: {"name": newName, "path": simplePathUrl}));
-     repo?.changeItem(this, copyWith(name: newName,simplePathUrl: "$simplePathFolder/$newName"));
+      repo?.changeItem(this,
+          copyWith(name: newName, simplePathUrl: "$simplePathFolder/$newName"));
       return true;
     } on GlobalError catch (e) {
       e.showErrorDialog();
@@ -156,8 +152,8 @@ extension FsModelEx on FsModel {
   ///复制链接
   Future<void> copyFullLink([WidgetRef? ref]) async {
     if (isDir) {
-      final domain = ref?.activeDomainRead?.domain;
-      final fullUrl = "${domain??""}$simplePathUrl";
+      final domain = ref?.activeDomainRead.domain;
+      final fullUrl = "${domain ?? ""}$simplePathUrl";
       fullUrl.copy();
       toast('拷贝成功:$fullUrl');
       return;
@@ -260,7 +256,8 @@ class FsModel extends ChangeNotifier {
       this.folderSelectIsActive = false,
       this.setting = const FsModelSetting(),
       this.dirs = const IListConst([]),
-      this.simplePathFolder = "",this.currentDirAllFiles = const IListConst([])});
+      this.simplePathFolder = "",
+      this.currentDirAllFiles = const IListConst([])});
 
   @igFreezedJson
   FilesRenderWidget get child {
@@ -307,21 +304,22 @@ class FsModel extends ChangeNotifier {
 
   //文件或者目录被点击
   void onFileTap(WidgetRef ref, BuildContext context) {
-    if(!isDir && isMobile()){
+    if (!isDir && isMobile()) {
       //手机上打开文件
       Logger().t(toJson());
-      context.push(MyPreviewFilePage().location,extra: PreviewParam(fsModel: this));
+      context.push(MyPreviewFilePage().location,
+          extra: PreviewParam(fsModel: this));
       return;
     }
     if (root != null && filesWidget != null) {
-      if(isMobile()){
-        context.push(const MyMobileFilesPage().location,extra: this);
-      }else{
+      if (isMobile()) {
+        context.push(const MyMobileFilesPage().location, extra: this);
+      } else {
         pp.Provider.of<FsModel>(context, listen: false).addDir(filesWidget!);
       }
     } else {
-      if(isMobile()){
-        context.push(const MyMobileFilesPage().location,extra: this);
+      if (isMobile()) {
+        context.push(const MyMobileFilesPage().location, extra: this);
       }
     }
   }
@@ -369,7 +367,6 @@ class FsModel extends ChangeNotifier {
     return jsonEncode(
         toJson()..addAll({"dirs": dirs.length, "root": root?.name}));
   }
-
 }
 
 ///ui设置
@@ -423,7 +420,6 @@ class FsModelCopyWidget extends ConsumerWidget {
   }
 }
 
-
 ///复制文件到路径
 class FsModelMoveWidget extends ConsumerWidget {
   final VoidCallback close;
@@ -443,12 +439,12 @@ class FsModelMoveWidget extends ConsumerWidget {
                 onPressed: path.isEmpty
                     ? null
                     : () async {
-                  final result = await fsModel.move(path);
-                  if (result) {
-                    fsModel.repo?.removeItem(fsModel);
-                    close();
-                  }
-                },
+                        final result = await fsModel.move(path);
+                        if (result) {
+                          fsModel.repo?.removeItem(fsModel);
+                          close();
+                        }
+                      },
                 child: Column(
                   children: [
                     Text('移动到目录', style: context.textTheme.titleMedium),
@@ -463,7 +459,6 @@ class FsModelMoveWidget extends ConsumerWidget {
     });
   }
 }
-
 
 ///文件树
 class FilesTree extends StatelessWidget {
@@ -534,9 +529,8 @@ class FilesTree extends StatelessWidget {
   }
 }
 
-
-
-String _formatIsoTimeString(String isoTimeString, {String outputFormat = 'yyyy-MM-dd HH:mm:ss'}) {
+String _formatIsoTimeString(String isoTimeString,
+    {String outputFormat = 'yyyy-MM-dd HH:mm:ss'}) {
   DateTime dateTime;
 
   try {
@@ -548,4 +542,3 @@ String _formatIsoTimeString(String isoTimeString, {String outputFormat = 'yyyy-M
   final DateFormat outputFormatter = DateFormat(outputFormat);
   return outputFormatter.format(dateTime);
 }
-

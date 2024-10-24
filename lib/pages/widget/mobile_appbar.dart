@@ -22,7 +22,6 @@ class MobileAppbar extends ConsumerWidget implements PreferredSizeWidget {
               child: Focus(
                 onKeyEvent: (node, event) {
                   final tvEvent = TvKey.create(event);
-                  print("event:$tvEvent");
                   FocusManager.instance.primaryFocus?.focusInDirection(TraversalDirection.down);
                   return KeyEventResult.ignored;
                 },

@@ -17,7 +17,7 @@ class FileIcon extends ConsumerWidget {
     Widget child;
     var fileIconSize = iconSize ?? _defaultIconSize;
     final ext = fileType.ext;
-    final layout = ref.activeDomain!.layoutStyle;
+    final layout = ref.activeDomain.layoutStyle;
     fileIconSize = switch (layout) {
       FilesLayoutStyle.list => fileIconSize,
       _ => iconSize ?? double.maxFinite
