@@ -6,10 +6,12 @@ class DownloadSelectPathDialog extends ConsumerStatefulWidget {
   const DownloadSelectPathDialog(this.model, {super.key});
 
   @override
-  ConsumerState<DownloadSelectPathDialog> createState() => _DownloadSelectPathDialogState();
+  ConsumerState<DownloadSelectPathDialog> createState() =>
+      _DownloadSelectPathDialogState();
 }
 
-class _DownloadSelectPathDialogState extends ConsumerState<DownloadSelectPathDialog> {
+class _DownloadSelectPathDialogState
+    extends ConsumerState<DownloadSelectPathDialog> {
   FsModel get model => widget.model;
   final _pathEditCtrl = TextEditingController();
 
@@ -32,7 +34,8 @@ class _DownloadSelectPathDialogState extends ConsumerState<DownloadSelectPathDia
       children: [
         Center(
           child: Card(
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
             child: ConstrainedBox(
               constraints: const BoxConstraints(
                 maxWidth: 400,
@@ -61,7 +64,8 @@ class _DownloadSelectPathDialogState extends ConsumerState<DownloadSelectPathDia
                           Row(children: [
                             Expanded(
                               child: TextFormField(
-                                  decoration: const InputDecoration(isDense: true, labelText: '选择下载目录'),
+                                  decoration: const InputDecoration(
+                                      isDense: true, labelText: '选择下载目录'),
                                   controller: _pathEditCtrl,
                                   onChanged: (_) {
                                     _formKey.currentState?.validate();
@@ -77,7 +81,9 @@ class _DownloadSelectPathDialogState extends ConsumerState<DownloadSelectPathDia
                                   MyFileTool().getADirectory().then((value) {
                                     if (value != null) {
                                       _pathEditCtrl.text = value.path;
-                                      ref.changeAppSetting((old) => old.copyWith(defaultDownloadPath: value.path));
+                                      ref.changeAppSetting((old) =>
+                                          old.copyWith(
+                                              defaultDownloadPath: value.path));
                                     }
                                   });
                                 },
@@ -86,7 +92,11 @@ class _DownloadSelectPathDialogState extends ConsumerState<DownloadSelectPathDia
                           const SizedBox(
                             height: 24,
                           ),
-                          if (myPlatform.isDesktop) Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: _buildActionWidgets(detail)),
+                          if (myPlatform.isDesktop)
+                            Column(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: _buildActionWidgets(detail)),
                           if (myPlatform.isMobile)
                             Column(
                               children: _buildActionWidgets(detail),
@@ -112,14 +122,17 @@ class _DownloadSelectPathDialogState extends ConsumerState<DownloadSelectPathDia
           Checkbox(
             value: appSetting.isUseDefaultDownloadPath,
             onChanged: (value) {
-              ref.changeAppSetting((oldSetting) => oldSetting.copyWith(isUseDefaultDownloadPath: value ?? false));
+              ref.changeAppSetting((oldSetting) => oldSetting.copyWith(
+                  isUseDefaultDownloadPath: value ?? false));
             },
             side: const BorderSide(width: .7),
             shape: const CircleBorder(),
           ),
           GestureDetector(
               onTap: () {
-                ref.changeAppSetting((oldSetting) => oldSetting.copyWith(isUseDefaultDownloadPath: appSetting.isUseDefaultDownloadPath.not));
+                ref.changeAppSetting((oldSetting) => oldSetting.copyWith(
+                    isUseDefaultDownloadPath:
+                        appSetting.isUseDefaultDownloadPath.not));
               },
               child: const Text('设为默认路径')),
         ],
@@ -141,13 +154,15 @@ class _DownloadSelectPathDialogState extends ConsumerState<DownloadSelectPathDia
                   : () {
                       if (_formKey.currentState?.validate() == true) {
                         final downloadUrl = detail.rawUrl;
-                        final savePath = File('${_pathEditCtrl.text}/${detail.name}');
+                        final savePath =
+                            File('${_pathEditCtrl.text}/${detail.name}');
                         context.nav.pop((downloadUrl, savePath));
                       } else {
                         ToastUtil.showWarning('路径验证失败');
                       }
                     },
-              child: Text('下载 (${ByteModel.create(detail.size.toDouble()).format()})')),
+              child: Text(
+                  '下载 (${ByteModel.create(detail.size.toDouble()).format()})')),
         ],
       )
     ];

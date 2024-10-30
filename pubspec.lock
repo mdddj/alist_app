@@ -418,10 +418,10 @@ packages:
     dependency: "direct main"
     description:
       name: dd_js_util
-      sha256: c2e0ba3f3564acbede7b20d94ce3f290e440f981ab563c2d46567f2056f823fa
+      sha256: "815c29399f842c3372e644ce4c864b5cec3abe60f5ee6e114a0045d67e24ee27"
       url: "https://pub.dev"
     source: hosted
-    version: "6.4.5"
+    version: "6.4.6"
   decimal:
     dependency: transitive
     description:
@@ -498,10 +498,10 @@ packages:
     dependency: "direct main"
     description:
       name: fast_immutable_collections
-      sha256: c3c73f4f989d3302066e4ec94e6ec73b5dc872592d02194f49f1352d64126b8c
+      sha256: e5e27788db94c5f1046585566a5cf63a8139a0d743cf9fdcab7ae7b0c3701a4a
       url: "https://pub.dev"
     source: hosted
-    version: "10.2.4"
+    version: "11.0.0"
   fbroadcast_nullsafety:
     dependency: "direct main"
     description:
@@ -913,10 +913,10 @@ packages:
     dependency: transitive
     description:
       name: html
-      sha256: "3a7812d5bcd2894edf53dfaf8cd640876cf6cef50a8f238745c8b8120ea74d3a"
+      sha256: "1fc58edeaec4307368c60d59b7e15b9d658b57d7f3125098b6294153c75337ec"
       url: "https://pub.dev"
     source: hosted
-    version: "0.15.4"
+    version: "0.15.5"
   http:
     dependency: transitive
     description:
@@ -977,10 +977,10 @@ packages:
     dependency: transitive
     description:
       name: image_picker_for_web
-      sha256: "65d94623e15372c5c51bebbcb820848d7bcb323836e12dfdba60b5d3a8b39e50"
+      sha256: "717eb042ab08c40767684327be06a5d8dbb341fe791d514e4b92c7bbe1b7bb83"
       url: "https://pub.dev"
     source: hosted
-    version: "3.0.5"
+    version: "3.0.6"
   image_picker_ios:
     dependency: transitive
     description:
@@ -1145,18 +1145,18 @@ packages:
     dependency: "direct main"
     description:
       name: loading_more_list_fast
-      sha256: ba2ead6519343ad97bb43a722e7fd31c133b76ae8ada34052e0498a235bcfa95
+      sha256: "4b64ecc3d1fbd5bcac18d187c5180dfbed158ed9d6e6353c429fc3fb98e0e014"
       url: "https://pub.dev"
     source: hosted
-    version: "7.1.7"
+    version: "7.1.8"
   loading_more_list_library_fast:
     dependency: "direct main"
     description:
       name: loading_more_list_library_fast
-      sha256: f18eaf9c05350648aad8cdac0b596ba12cea30ec57cc521f9624cf6d44ea623f
+      sha256: "117e5fc655708809827ee0eceb2302a0190b38042769418a0094948958485e3f"
       url: "https://pub.dev"
     source: hosted
-    version: "4.1.5"
+    version: "4.1.6"
   logger:
     dependency: "direct main"
     description:
@@ -1289,10 +1289,10 @@ packages:
     dependency: transitive
     description:
       name: mime
-      sha256: "801fd0b26f14a4a58ccb09d5892c3fbdeff209594300a542492cf13fba9d247a"
+      sha256: "41a20518f0cb1256669420fdba0cd90d21561e560ac240f26ef8322e45bb7ed6"
       url: "https://pub.dev"
     source: hosted
-    version: "1.0.6"
+    version: "2.0.0"
   modal_bottom_sheet:
     dependency: "direct main"
     description:
@@ -1393,10 +1393,10 @@ packages:
     dependency: "direct main"
     description:
       name: path_provider
-      sha256: fec0d61223fba3154d87759e3cc27fe2c8dc498f6386c6d6fc80d1afdd1bf378
+      sha256: "50c5dd5b6e1aaf6fb3a78b33f6aa3afca52bf903a8a5298f53101fdaee55bbcd"
       url: "https://pub.dev"
     source: hosted
-    version: "2.1.4"
+    version: "2.1.5"
   path_provider_android:
     dependency: transitive
     description:
@@ -1617,10 +1617,10 @@ packages:
     dependency: transitive
     description:
       name: saver_gallery
-      sha256: "5f4123ec1cd5ed9fcd93198ab30ffe0c7746afcbf6846445432de93240fa7b4e"
+      sha256: ef9b06de9a947fa85226cd478cf3af394c8464594f87b4a6c373772a19dc372b
       url: "https://pub.dev"
     source: hosted
-    version: "3.0.6"
+    version: "4.0.0"
   screen_brightness:
     dependency: transitive
     description:
